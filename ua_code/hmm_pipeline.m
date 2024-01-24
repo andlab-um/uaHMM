@@ -5,46 +5,56 @@
 % Adapted by Eric WANG
 %%%%%%%%%%%%%%%%%%%%%%%%%
 %% SETUP THE MATLAB PATHS AND FILE NAMES
-K = 3; % no. states
-repetitions = 5; % to run it multiple times (keeping all the results)
-DirOut = 'C:/Users/28694/Desktop/ua_code/hmm-marout/ua/';
+
+K_values = 23:30; % K value range
+repetitions = 1; % number of repeat
+DirOutBase = 'C:\Users\28694\Documents\GitHub\uaHMM\ua_code\hmm-marout\ua\'; 
 
 TR = 0.72;  
-use_stochastic = 0 % set to 1 if you have loads of data
+use_stochastic = 0; % disabled - error if enable
 
-N = 25; % no. subjects
-T = repmat(240, N*2, 1);  % Create a 1 x 2N vector with all elements 480
-disp(T);
+N = 25; % Participants number, 25 if ua, 37 if ua-rep
+T = repmat(240, N*2, 1); % 240 if ua, 480 if ua-rep
 
-options = struct();
-options.K = K; % number of states
-options.order = 0; % no autoregressive components
-options.zeromean = 0; % model the mean
-options.covtype = 'full'; % full covariance matrix
-options.Fs = 1/TR;
-options.verbose = 1;
-options.standardise = 1;
-options.inittype = 'HMM-MAR';
-options.cyc = 500;
-options.initcyc = 10;
-options.initrep = 3;
 
-% stochastic options
-if use_stochastic
-    options.BIGNbatch = round(N/30);
-    options.BIGtol = 1e-7;
-    options.BIGcyc = 500;
-    options.BIGundertol_tostop = 5;
-    options.BIGforgetrate = 0.7;
-    options.BIGbase_weights = 0.9;
+for K = K_values
+
+    DirOut = [DirOutBase 'K' num2str(K) '\'];
+    if ~exist(DirOut, 'dir')
+        mkdir(DirOut);
+    end
+
+
+    options = struct();
+    options.K = K;
+    options.order = 0; 
+    options.zeromean = 0; 
+    options.covtype = 'full'; 
+    options.Fs = 1 / TR;
+    options.verbose = 1;
+    options.standardise = 1;
+    options.inittype = 'HMM-MAR';
+    options.cyc = 500;
+    options.initcyc = 10;
+    options.initrep = 3;
+
+    if use_stochastic
+        options.BIGNbatch = round(N/30);
+        options.BIGtol = 1e-7;
+        options.BIGcyc = 500;
+        options.BIGundertol_tostop = 5;
+        options.BIGforgetrate = 0.7;
+        options.BIGbase_weights = 0.9;
+    end
+
+    for r = 1:repetitions
+        [hmm, Gamma, ~, vpath] = hmmmar(data, T, options);
+        
+        save([DirOut 'HMMrun_rep' num2str(r) '.mat'], 'Gamma', 'vpath', 'hmm');
+        disp(['RUN ' num2str(r) ' for K=' num2str(K) 'finished']);
+    end
 end
 
-% We run the HMM multiple times
-for r = 1:repetitions
-    [hmm, Gamma, ~, vpath] = hmmmar(data,T,options);
-    save([DirOut 'HMMrun_rep' num2str(r) '.mat'],'Gamma','vpath','hmm')
-    disp(['RUN ' num2str(r)])
-end
 %% Calculate similarity
 
 for i = 1:repetitions-1
@@ -75,7 +85,7 @@ average_similarities = zeros(size(K_ranges));
 
 for i = 1:length(K_ranges)
     K = K_ranges(i);
-    filename = fullfile(DirOut, sprintf('K%d/hmm-maroutHMM_SimilarityResults_K%d.mat', K, K));
+    filename = fullfile(DirOutBase, sprintf('K%d/HMM_SimilarityResults_K%d.mat', K, K));
     similarity_struct = load(filename);
     similarity_values = struct2array(similarity_struct);
     average_similarities(i) = mean(similarity_values);
@@ -85,31 +95,48 @@ end
 plot(K_ranges, average_similarities, '-o');
 xlabel('K value');
 ylabel('Average Similarity');
-title('Average Similarity for Different K values');
+title('Average Similarity for Different K values Using UA-rep Data');
+
+%% using t distance
+K_range = 2:22;
+t_distances = zeros(length(K_range), 1);
 
 
-%% Pull out metastates
+for K = K_range
+    % HMM output dir
+    filePath = fullfile(DirOutBase, ['K' num2str(K)], 'HMMrun_rep1.mat');
+    
+    % Load gamma
+    load(filePath, 'Gamma');
+    
+    % get most likely state at each timepoint
+    [~, most_likely_states] = max(Gamma, [], 2);
 
-for r = 1:repetitions
-    figure(r)
-    load([DirOut 'HMMrun_rep' num2str(r) '.mat'],'Gamma','hmm')
-    subplot(1,2,1) % Figure 2B
-    GammaSessMean = squeeze(mean(reshape(Gamma,[480 2 N K]),1));    
-    GammaSubMean = squeeze(mean(GammaSessMean,1));
-    [~,pca1] = pca(GammaSubMean','NumComponents',1);
-    [~,ord] = sort(pca1); 
-    imagesc(corr(GammaSubMean(:,ord))); colorbar
-    subplot(1,2,2) % Figure 2A
-    P = hmm.P;
-    for j=1:K, P(j,j) = 0; P(j,:) = P(j,:) / sum(P(j,:));  end
-    imagesc(P(ord,ord),[0 0.25]); colorbar
-    axis square
-    hold on
-    for j=0:13
-        plot([0 13] - 0.5,[j j] + 0.5,'k','LineWidth',2)
-        plot([j j] + 0.5,[0 13] - 0.5,'k','LineWidth',2)
+
+    within_state_corrs = [];
+    between_state_corrs = [];
+
+    % for all timepoint
+    for t = 1:(size(Gamma, 1) - 1)
+        % within
+        if most_likely_states(t) == most_likely_states(t+1)
+            within_state_corrs(end+1) = corr(data(t, :)', data(t+1, :)');
+        else
+            % between
+            between_state_corrs(end+1) = corr(data(t, :)', data(t+1, :)');
+        end
     end
-    hold off
+
+    % ttest
+    [~, ~, ~, stats] = ttest2(within_state_corrs, between_state_corrs);
+    t_distances(K-1) = stats.tstat;
+
+    disp(['The t-distance for K=' num2str(K) ' is: ', num2str(stats.tstat)]);
 end
 
-
+% graph
+figure;
+plot(K_range, t_distances, 'o-');
+xlabel('Number of states (K)');
+ylabel('t-distance');
+title('t-distance for different K values');
