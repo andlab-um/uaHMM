@@ -6,15 +6,15 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%
 %% SETUP THE MATLAB PATHS AND FILE NAMES
 
-K_values = 23:30; % K value range
-repetitions = 1; % number of repeat
-DirOutBase = 'C:\Users\28694\Documents\GitHub\uaHMM\ua_code\hmm-marout\ua\'; 
+K_values = 2:22; % K value range
+repetitions = 5; % number of repeat
+DirOutBase = 'C:\Users\28694\Documents\GitHub\uaHMM\ua_code\output\ua_rep_ses2\'; 
 
-TR = 0.72;  
-use_stochastic = 0; % disabled - error if enable
+%TR = 0.72;  
+use_stochastic = 0; % disabled
 
-N = 25; % Participants number, 25 if ua, 37 if ua-rep
-T = repmat(240, N*2, 1); % 240 if ua, 480 if ua-rep
+N = 37; % Participants number, 25 if ua, 37 if ua-rep
+T = repmat(480, N, 1); % 240 if ua, 480 if ua-rep
 
 
 for K = K_values
@@ -27,16 +27,16 @@ for K = K_values
 
     options = struct();
     options.K = K;
-    options.order = 0; 
-    options.zeromean = 0; 
-    options.covtype = 'full'; 
-    options.Fs = 1 / TR;
-    options.verbose = 1;
-    options.standardise = 1;
-    options.inittype = 'HMM-MAR';
-    options.cyc = 500;
-    options.initcyc = 10;
-    options.initrep = 3;
+%    options.order = 0; 
+%    options.zeromean = 0; 
+%    options.covtype = 'full'; 
+%    options.Fs = 1 / TR;
+%    options.verbose = 1;
+%    options.standardise = 1;
+%    options.inittype = 'HMM-MAR';
+%    options.cyc = 500;
+%    options.initcyc = 10;
+%    options.initrep = 3;
 
     if use_stochastic
         options.BIGNbatch = round(N/30);
@@ -55,31 +55,32 @@ for K = K_values
     end
 end
 
-%% Calculate similarity
-
-for i = 1:repetitions-1
-    for j = i+1:repetitions
-        % load 2 gamma
-        data_i = load([DirOut 'HMMrun_rep' num2str(i) '.mat'], 'Gamma');
-        gamma_i = data_i.Gamma;
-        data_j = load([DirOut 'HMMrun_rep' num2str(j) '.mat'], 'Gamma');
-        gamma_j = data_j.Gamma;
-        
-        % calculate similarity
-        [similarity, ~, ~] = getGammaSimilarity(gamma_i, gamma_j);
-        
-
-        similarity_name = ['similarity_' num2str(i) '_' num2str(j)];
-        similarity_results.(similarity_name) = similarity;
-        
-        fprintf('Similarity between run %d and run %d: %.4f\n', i, j, similarity);
+%% Calculate similarity (old)
+for state = 2:19
+    DirOut = ['C:\Users\28694\Documents\GitHub\uaHMM\ua_code\real\ua_ses2_de\K' num2str(state) '\'];
+    for i = 1:repetitions-1
+        for j = i+1:repetitions
+            % load 2 gamma
+            data_i = load([DirOut 'HMMrun_rep' num2str(i) '.mat'], 'Gamma');
+            gamma_i = data_i.Gamma;
+            data_j = load([DirOut 'HMMrun_rep' num2str(j) '.mat'], 'Gamma');
+            gamma_j = data_j.Gamma;
+            
+            % calculate similarity
+            [similarity, ~, ~] = getGammaSimilarity(gamma_i, gamma_j);
+            
+    
+            similarity_name = ['similarity_' num2str(i) '_' num2str(j)];
+            similarity_results.(similarity_name) = similarity;
+            
+            fprintf('Similarity between run %d and run %d: %.4f\n', i, j, similarity);
+        end
     end
+    save([DirOut 'HMM_SimilarityResults_K' num2str(state) '.mat'], '-struct', 'similarity_results');
 end
-save([DirOut 'HMM_SimilarityResults_K' num2str(K) '.mat'], '-struct', 'similarity_results');
-
-%% Graph and determine no. K states
+%% Graph and determine no. K states (old)
  
-K_ranges = 2:8; 
+K_ranges = 2:19; 
 average_similarities = zeros(size(K_ranges)); 
 
 
@@ -98,13 +99,15 @@ ylabel('Average Similarity');
 title('Average Similarity for Different K values Using UA-rep Data');
 
 %% using t distance
-K_range = 2:22;
-t_distances = zeros(length(K_range), 1);
+K_ranges = 2:21;
+t_distances = zeros(length(K_ranges), 1);
 
+DirOutBase = 'C:\Users\28694\Documents\GitHub\uaHMM\ua_code\real\ua_rep_ses2_de\'; 
+%remember to change data to corresponding session
 
-for K = K_range
+for K = K_ranges
     % HMM output dir
-    filePath = fullfile(DirOutBase, ['K' num2str(K)], 'HMMrun_rep1.mat');
+    filePath = fullfile(DirOutBase, ['K' num2str(K)], 'HMMrun_rep2.mat'); % select rep
     
     % Load gamma
     load(filePath, 'Gamma');
@@ -136,7 +139,7 @@ end
 
 % graph
 figure;
-plot(K_range, t_distances, 'o-');
+plot(K_ranges, t_distances, 'o-');
 xlabel('Number of states (K)');
 ylabel('t-distance');
 title('t-distance for different K values');
