@@ -3,6 +3,7 @@ function [LL,feat] = hmm_gradient(X, hmm, options)
 %
 % computes the gradient of HMM log-likelihood for time series X (single
 % subject/session) with respect to specified parameters
+% for use with HMM-MAR toolbox (https://github.com/OHBA-analysis/HMM-MAR)
 % 
 % INPUT:
 % X:            example data (timeseries of a single subject/session, in
@@ -92,7 +93,7 @@ end
 
 % dual estimation to get subject-specific HMM, Gamma, Xi, likelihood, and
 % transformed data (in case of embeddings)
-[hmm_sub, gamma_tmp, ~, Xi_tmp, LL,Xt] = hmmdual(X,T,hmm); % embed data within hmmdual
+[hmm_sub, gamma_tmp, Xi_tmp, ~, LL,Xt] = hmmdual_FK(X,T,hmm); % embed data within hmmdual_FK
 LL = -sum(LL);
 
 % compute gradient
