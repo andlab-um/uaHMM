@@ -113,7 +113,17 @@ end
 
 save('output_HMM\Brain_state\covars.mat', 'covars');
 
-%%
+%% Figure 3 Graph out the activation scale
+
+% brain regions
+brain_regions = {'HIP-rh', 'AMY-rh', 'pTHA-rh', 'aTHA-rh', 'NAc-rh', 'GP-rh', 'PUT-rh', 'CAU-rh',...
+                 'HIP-lh', 'AMY-lh', 'pTHA-lh', 'aTHA-lh', 'NAc-lh', 'GP-lh', 'PUT-lh', 'CAU-lh',...
+                 'VisCent', 'VisPeri', 'SomMot A', 'SomMot B', 'DorsAttn A', 'DorsAttn B',...
+                 'SalVentAttn A', 'SalVentAttn B', 'Limbic A', 'Limbic B', 'Cont A', 'Cont B', 'Cont C',...
+                 'Default A', 'Default B', 'Default C', 'TempPar'};
+
+
+% Color
 colors = [0 0.4470 0.7410;   % Blue
           0.8500 0.3250 0.0980;  % Red
           0.9290 0.6940 0.1250;  % Yellow
@@ -124,23 +134,30 @@ colors = [0 0.4470 0.7410;   % Blue
           0.7 0.7 0.7;           % Gray
           0.8 0.6 0.6;           % Pink
           0.75 0.75 0];          % Olive
-
-figure;
-hold on;
-
-% 用于图例的标签
-color_names = {'Blue', 'Red', 'Yellow', 'Purple', 'Green', 'Cyan', 'Dark red', 'Gray', 'Pink', 'Olive'};
-
-% 画出每一个颜色的柱状图
-for i = 1:size(colors, 1)
-    bar(i, 1, 'FaceColor', colors(i, :), 'DisplayName', color_names{i});
+          
+for state_idx = 1:size(z_mean, 1)
+    state_data = z_mean(state_idx, :);
+    
+    [sorted_vals, sorted_idx] = sort(state_data);
+    top6_idx = sorted_idx(end-5:end); % Max 6
+    bottom6_idx = sorted_idx(1:6);    % Min 6
+    
+    selected_regions = [brain_regions(top6_idx), brain_regions(bottom6_idx)];
+    selected_vals = [state_data(top6_idx), state_data(bottom6_idx)];
+    
+    figure;
+    hBar = barh(selected_vals); 
+    
+    for i = 1:length(selected_vals)
+        hBar.FaceColor = 'flat';
+        hBar.CData(i,:) = colors(state_idx, :); 
+    end
+    
+    set(gca, 'yticklabel', selected_regions);
+    xlabel('Z-scored Activation');
+    title(['State ', num2str(state_idx)]);
+    xlim([-2.7, 2.7]); 
 end
-
-% 添加图例
-legend('show');
-
-set(gca, 'XTick', 1:10, 'XTickLabel', color_names);
-hold off;
 
 
 %% Figure 4 - Basic connectron analysis
@@ -870,7 +887,7 @@ for state = 1:10
     
     errorbar(1.2, mean(hmm_state_group_data_flat), std(hmm_state_group_data_flat)/sqrt(length(hmm_state_group_data_flat)), 'o', ...
         'Color', colors(2,:), 'MarkerFaceColor', colors(2,:), 'LineWidth', 1.5);
-    set(gca, 'XTick', [1 1.2], 'XTickLabel', {'Task', 'Post'});
+    set(gca, 'XTick', [1 1.2], 'XTickLabel', {'Task', 'Post'},'fontweight','bold');
     xlim([0.9 1.3]);
 
     set(gca, 'TickLength', [0 0]);
@@ -878,12 +895,67 @@ for state = 1:10
     ylim([min(mean([eall_group_data_flat; hmm_state_group_data_flat]) - std([eall_group_data_flat; hmm_state_group_data_flat])/sqrt(length([eall_group_data_flat; hmm_state_group_data_flat]))) - 0.1, ...
           max(mean([eall_group_data_flat; hmm_state_group_data_flat]) + std([eall_group_data_flat; hmm_state_group_data_flat])/sqrt(length([eall_group_data_flat; hmm_state_group_data_flat]))) + 0.1]);
 
-    title(sprintf('State %d', state));
-    xlabel('Condition');
-    ylabel('Activation Level');
-    
+    title(sprintf('State %d', state),'fontweight','bold');
+    xlabel('Scan Session','fontweight','bold');
+    ylabel('Activation Level','fontweight','bold');
+    %saveas(gcf, sprintf('State_%d.jpg', state));  % Save as 'State_1.jpg', 'State_2.jpg', etc.
+
     hold off;
 end
+
+%% Figure 6 Version 2
+
+% Colors for Task and Post states
+task_color = [0 0 0];  % Black for Task
+post_colors = [0 0.4470 0.7410;   % Blue
+               0.8500 0.3250 0.0980;  % Red
+               0.9290 0.6940 0.1250;  % Yellow
+               0.4940 0.1840 0.5560;  % Purple
+               0.4660 0.6740 0.1880;  % Green
+               0.3010 0.7450 0.9330;  % Cyan
+               0.6350 0.0780 0.1840;  % Dark red
+               0.7 0.7 0.7;           % Gray
+               0.8 0.6 0.6;           % Pink
+               0.75 0.75 0];          % Olive
+
+% Initialize a new figure for all states
+figure;
+hold on;
+
+% Plot Task data (only once)
+eall_group_data_flat = reshape(task_fmri{:, 2:end}, [], 1);  % 37 x 33 -> 1221 x 1
+errorbar(1, mean(eall_group_data_flat), std(eall_group_data_flat)/sqrt(length(eall_group_data_flat)), 'o', ...
+    'Color', task_color, 'MarkerFaceColor', task_color, 'LineWidth', 1.5);
+
+% Loop over all states and plot their Post data
+for state = 1:10
+    hmm_state_group_data = squeeze(all_hmm_states_data(:, :, state));
+    hmm_state_group_data_flat = reshape(hmm_state_group_data, [], 1);  % 37 x 33 -> 1221 x 1
+    
+    % Plot Post state data at x = 1.2 + state
+    errorbar(1.2 + state, mean(hmm_state_group_data_flat), std(hmm_state_group_data_flat)/sqrt(length(hmm_state_group_data_flat)), 'o', ...
+        'Color', post_colors(state, :), 'MarkerFaceColor', post_colors(state, :), 'LineWidth', 1.5);
+end
+
+% Set x-axis labels: Task, State1_Post, State2_Post, ..., State10_Post
+x_labels = {'Task', 'State1 Post', 'State2 Post', 'State3 Post', 'State4 Post', ...
+            'State5 Post', 'State6 Post', 'State7 Post', 'State8 Post', 'State9 Post', 'State10 Post'};
+set(gca, 'XTick', [1, 2.2:1:11.2], 'XTickLabel', x_labels, 'fontweight', 'bold');
+
+% Set axis limits and labels
+xlim([0.9, 11.5]);
+set(gca, 'TickLength', [0 0]);
+
+% Set the y-axis limits based on the minimum and maximum values
+ylim([min(mean([eall_group_data_flat; hmm_state_group_data_flat]) - std([eall_group_data_flat; hmm_state_group_data_flat])/sqrt(length([eall_group_data_flat; hmm_state_group_data_flat]))) - 0.1, ...
+      max(mean([eall_group_data_flat; hmm_state_group_data_flat]) + std([eall_group_data_flat; hmm_state_group_data_flat])/sqrt(length([eall_group_data_flat; hmm_state_group_data_flat]))) + 0.1]);
+
+% Add labels and title
+%xlabel('Scan Session', 'fontweight', 'bold');
+ylabel('Activation Level', 'fontweight', 'bold');
+title('Task vs Post State Activation Levels', 'fontweight', 'bold');
+
+hold off;
 
 
 %% Table 1: 33 brain area activation changes in each state (Rest fMRI HMM vs Task fMRI)

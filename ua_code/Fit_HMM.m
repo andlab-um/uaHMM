@@ -138,5 +138,5 @@ grid on;
 % options.cvverbose = 1;
 %
 % [hmm, Gamma, Xi, vpath, GammaInit, residuals, fe] = hmmmar(data_all_reshaped, T, options);
-% save('output_HMM/HMM_Model_K10/Hmm', 'ch_scores', 'hmm', 'Gamma', 'Xi', 'vpath', 'GammaInit', 'residuals', 'fe');
+% save('output_HMM/HMM_Model_K10/Hmm', 'hmm');
 
