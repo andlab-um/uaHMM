@@ -51,52 +51,55 @@ end
 a = load("input_data\Behavioral_data.mat");
 data = a.behavioral_data(:, 1:4);
 figure;
-labels = {'Lie Rate (Total)', 'Lie Rate (Lie Enhanced)', 'Lie Rate (Honesty Enhanced)', 'Lie Rate (Random Enhanced)'};
+labels = {'Lie Rate (Total)', 'Lie Rate (Lie Enhanced)', 'Lie Rate (Honesty Enhanced)', 'Lie Rate (Random)'};
 
-colors = [0.45, 0.80, 0.69];
+colors = [249,179,173] / 255;
 
 daviolinplot(data, 'groups', ones(size(data, 1), 1), ...
                  'colors', colors, 'boxcolors', 'same', ...
                  'violinalpha', 0.8, 'boxalpha', 0.8, ... 
                  'violin', 'half', 'xtlabels', labels, 'outliers',0);
 
-title('Behavioral Summary (Lie Rate)','fontweight','bold');
 ylabel('Lie Rate');
 grid on;
 hold off;
 
+set(gca,'FontSize',15);
+saveas(gcf,'figures/figure_1_1.jpg');
+
 %% Figure 1: basic behavioral result - Entropy
 data = a.behavioral_data(:, 5:8);
 figure;
-labels = {'Entropy (Total)', 'Entropy (Lie Enhanced)', 'Entropy (Honesty Enhanced)', 'Entropy (Random Enhanced)'}; 
+labels = {'Entropy (Total)', 'Entropy (Lie Enhanced)', 'Entropy (Honesty Enhanced)', 'Entropy (Random)'}; 
 
-colors = [0.98, 0.40, 0.35];
+colors = [180,206,226] / 255;
 
 daviolinplot(data, 'groups', ones(size(data, 1), 1), ...
                  'colors', colors, 'boxcolors', 'same', ...
                  'violinalpha', 0.8, 'boxalpha', 0.8, ...
                  'violin', 'half', 'xtlabels', labels,'outliers',0);
 
-title('Behavioral Summary (Entropy)','fontweight','bold');
 ylabel('Entropy');
 grid on;
 hold off;
+set(gca,'FontSize',15);
+saveas(gcf,'figures/figure_1_2.jpg');
 
 %% Figure 1: basic behavioral result - Model Parameter
-data = a.behavioral_data(:, 9:end);
-
-
-labels = {'v former diff', 'v ses', 'v former diff ses', 'v diff', 'v diff ses', 'a ses', 'z ses'};
-
-colors =[0.90, 0.70, 0.30]; 
-
-daviolinplot(data, 'groups', ones(size(data, 1), 1), ...
-                 'colors', colors, 'violin', 'half', 'xtlabels', labels, 'outliers',0);
-
-title('Model Parameter Summary','fontweight','bold');
-ylabel('Fitted Value');
-grid on;
-hold off;
+% data = a.behavioral_data(:, 9:end);
+% 
+% figure;
+% labels = {'v former diff', 'v ses', 'v former diff ses', 'v diff', 'v diff ses', 'a ses', 'z ses'};
+% 
+% colors = [116,198,170] / 255;
+% 
+% daviolinplot(data, 'groups', ones(size(data, 1), 1), ...
+%                  'colors', colors, 'violin', 'half', 'xtlabels', labels, 'outliers',0, 'FontSize',25);
+% 
+% ylabel('Fitted Value');
+% grid on;
+% hold off;
+% saveas(gcf,'figures/figure_1_3.jpg');
 
 %% Figure 3 - Brain state visualization (activation + covariance) - To be Continued in Python notebook
 
@@ -105,60 +108,13 @@ z_mean = zscore(Mean)';
 
 save('output_HMM\Brain_state\Mean_states.mat', 'z_mean');
 
-covars = zeros(10,33, 33);
+covars = zeros(10,33,33);
 
 for state = 1:10
     covars(state,:,:) = getFuncConn(best_hmm, state);
 end
 
 save('output_HMM\Brain_state\covars.mat', 'covars');
-
-%% Figure 3 Graph out the activation scale
-
-% brain regions
-brain_regions = {'HIP-rh', 'AMY-rh', 'pTHA-rh', 'aTHA-rh', 'NAc-rh', 'GP-rh', 'PUT-rh', 'CAU-rh',...
-                 'HIP-lh', 'AMY-lh', 'pTHA-lh', 'aTHA-lh', 'NAc-lh', 'GP-lh', 'PUT-lh', 'CAU-lh',...
-                 'VisCent', 'VisPeri', 'SomMot A', 'SomMot B', 'DorsAttn A', 'DorsAttn B',...
-                 'SalVentAttn A', 'SalVentAttn B', 'Limbic A', 'Limbic B', 'Cont A', 'Cont B', 'Cont C',...
-                 'Default A', 'Default B', 'Default C', 'TempPar'};
-
-
-% Color
-colors = [0 0.4470 0.7410;   % Blue
-          0.8500 0.3250 0.0980;  % Red
-          0.9290 0.6940 0.1250;  % Yellow
-          0.4940 0.1840 0.5560;  % Purple
-          0.4660 0.6740 0.1880;  % Green
-          0.3010 0.7450 0.9330;  % Cyan
-          0.6350 0.0780 0.1840;  % Dark red
-          0.7 0.7 0.7;           % Gray
-          0.8 0.6 0.6;           % Pink
-          0.75 0.75 0];          % Olive
-          
-for state_idx = 1:size(z_mean, 1)
-    state_data = z_mean(state_idx, :);
-    
-    [sorted_vals, sorted_idx] = sort(state_data);
-    top6_idx = sorted_idx(end-5:end); % Max 6
-    bottom6_idx = sorted_idx(1:6);    % Min 6
-    
-    selected_regions = [brain_regions(top6_idx), brain_regions(bottom6_idx)];
-    selected_vals = [state_data(top6_idx), state_data(bottom6_idx)];
-    
-    figure;
-    hBar = barh(selected_vals); 
-    
-    for i = 1:length(selected_vals)
-        hBar.FaceColor = 'flat';
-        hBar.CData(i,:) = colors(state_idx, :); 
-    end
-    
-    set(gca, 'yticklabel', selected_regions);
-    xlabel('Z-scored Activation');
-    title(['State ', num2str(state_idx)]);
-    xlim([-2.7, 2.7]); 
-end
-
 
 %% Figure 4 - Basic connectron analysis
 
@@ -235,47 +191,16 @@ ci_switching_pre_upper = mean(switching_rate_pre) + 1.96 * (std(switching_rate_p
 ci_switching_post_lower = mean(switching_rate_post) - 1.96 * (std(switching_rate_post) / sqrt(size(switching_rate_post, 1)));
 ci_switching_post_upper = mean(switching_rate_post) + 1.96 * (std(switching_rate_post) / sqrt(size(switching_rate_post, 1)));
 
-
-colors = [0 0.4470 0.7410;   % Blue
-          0.8500 0.3250 0.0980;  % Red
-          0.9290 0.6940 0.1250;  % Yellow
-          0.4940 0.1840 0.5560;  % Purple
-          0.4660 0.6740 0.1880;  % Green
-          0.3010 0.7450 0.9330;  % cyan
-          0.6350 0.0780 0.1840;  % Dark red
-          0.7 0.7 0.7;           % Gray
-          0.8 0.6 0.6;           % Pink
-          0.75 0.75 0];          % Olive
-
-%%
-colors = [0 0.4470 0.7410;   % Blue
-          0.8500 0.3250 0.0980;  % Red
-          0.9290 0.6940 0.1250;  % Yellow
-          0.4940 0.1840 0.5560;  % Purple
-          0.4660 0.6740 0.1880;  % Green
-          0.3010 0.7450 0.9330;  % Cyan
-          0.6350 0.0780 0.1840;  % Dark red
-          0.7 0.7 0.7;           % Gray
-          0.8 0.6 0.6;           % Pink
-          0.75 0.75 0];          % Olive
-
-figure;
-hold on;
-
-% 用于图例的标签
-color_names = {'State 1', 'State 2', 'State 3', 'State 4', 'State 5', 'State 6', 'State 7', 'State 8', 'State 9', 'State 10'};
-
-% 画出每一个颜色的柱状图
-for i = 1:size(colors, 1)
-    bar(i, 1, 'FaceColor', colors(i, :), 'DisplayName', color_names{i});
-end
-
-% 添加图例
-legend('show');
-
-set(gca, 'XTick', 1:10, 'XTickLabel', color_names);
-hold off;
-
+colors = [166/255 206/255 227/255;   % Light Blue
+          31/255 120/255 180/255;    % Dark Blue
+          178/255 223/255 138/255;   % Light Green
+          51/255 160/255 44/255;     % Dark Green
+          251/255 154/255 153/255;   % Light Red
+          227/255 26/255 28/255;     % Dark Red
+          253/255 191/255 111/255;   % Light Orange
+          255/255 127/255 0/255;     % Orange
+          202/255 178/255 214/255;   % Light Purple
+          106/255 61/255 154/255];   % Dark Purple
 
 %% Figure 4 - graph FO and switching rate with 95% CI
 
@@ -290,25 +215,26 @@ end
 set(gca, 'XTick', 1.5:2:2*length(ci_FO_pre_lower), 'XTickLabel', arrayfun(@(x) ['State ' num2str(x)], 1:length(ci_FO_pre_lower), 'UniformOutput', false));
 ylim([0 0.2]);
 
-title('DISTRIBUTION OF THE STATES FRACTIONAL OCCUPANCY');
-xlabel('STATE');
-ylabel('Fractional Occupancy');
+xlabel('STATE','fontweight','bold');
+ylabel('Fractional Occupancy','fontweight','bold');
 hold off;
+set(gca,'FontSize',15);
 
+saveas(gcf,'figures/figure_3_1.jpg')
 
 figure;
 hold on;
 
-errorbar(1, mean(switching_rate_pre), mean(switching_rate_pre) - ci_switching_pre_lower, ci_switching_pre_upper - mean(switching_rate_pre), 'o', 'Color', colors(1,:), 'MarkerFaceColor', colors(1,:), 'LineWidth', 1.5);
-errorbar(1.2, mean(switching_rate_post), mean(switching_rate_post) - ci_switching_post_lower, ci_switching_post_upper - mean(switching_rate_post), 'o', 'Color', colors(1,:) * 0.5 + 0.5, 'MarkerFaceColor', colors(1,:) * 0.5 + 0.5, 'LineWidth', 1.5);
+errorbar(1, mean(switching_rate_pre), mean(switching_rate_pre) - ci_switching_pre_lower, ci_switching_pre_upper - mean(switching_rate_pre), 'o', 'Color', [0 0.4470 0.7410], 'MarkerFaceColor', [0 0.4470 0.7410], 'LineWidth', 1.5);
+errorbar(1.2, mean(switching_rate_post), mean(switching_rate_post) - ci_switching_post_lower, ci_switching_post_upper - mean(switching_rate_post), 'o', 'Color', [0 0.4470 0.7410] * 0.5 + 0.5, 'MarkerFaceColor', [0 0.4470 0.7410] * 0.5 + 0.5, 'LineWidth', 1.5);
 
 set(gca, 'XTick', [1 1.2], 'XTickLabel', {'Pre Task', 'Post Task'});
 xlim([0.9 1.3]);
 set(gca, 'TickLength', [0 0]);
 
-title('DISTRIBUTION OF THE SWITCHING RATE');
-ylabel('Switching Rate');
-
+ylabel('Switching Rate','fontweight','bold');
+set(gca,'FontSize',15);
+saveas(gcf,'figures/figure_3_2.jpg')
 hold off;
 
 %% Figure 4 -  Basic Transition Matrix analysis
@@ -334,6 +260,8 @@ xticks(1:10);
 yticks(1:10); 
 xticklabels({'S1', 'S2', 'S3', 'S4', 'S5', 'S6','S7','S8','S9','S10'});
 yticklabels({'S1', 'S2', 'S3', 'S4', 'S5', 'S6','S7','S8','S9','S10'}); 
+set(gca,'FontSize',15);
+saveas(gcf,'figures/figure_4_1.jpg')
 
 figure;
 % Post Rest HMM
@@ -347,6 +275,9 @@ xticks(1:10);
 yticks(1:10);
 xticklabels({'S1', 'S2', 'S3', 'S4', 'S5', 'S6','S7','S8','S9','S10'});
 yticklabels({'S1', 'S2', 'S3', 'S4', 'S5', 'S6','S7','S8','S9','S10'});
+set(gca,'FontSize',15);
+
+saveas(gcf,'figures/figure_4_2.jpg')
 
 %% Figure 4 - dNBS (please type dNBS in command window
 
@@ -419,7 +350,9 @@ for i = 1:numedges(G)
 end
 
 axis off;
-title('Pre > Post State Transition Graph');
+title('Pre > Post State Transition Graph','FontWeight','bold');
+
+saveas(gcf,'figures/figure_4_3.jpg')
 
 %% Figure 4 - dNBS plot dNBS Post > Pre
 
@@ -478,7 +411,8 @@ end
 h.MarkerSize = fractional_occupancy * 125;  
 
 axis off;
-title('Post > Pre State Transition Graph');
+title('Post > Pre State Transition Graph','FontWeight','bold');
+saveas(gcf,'figures/figure_4_4.jpg')
 
 %% Figure 5 - HMM and Behavior
 clc
@@ -526,21 +460,34 @@ end
 %% Figure 5 - HMM and Behavior
 % Visualize TP and Lie rate (All)
 
+% define colors
+% Main colors
+main_color_blue = [55/255, 126/255, 184/255]; 
+main_color_red = [228/255, 26/255, 28/255];  
+main_color_green = [77/255, 175/255, 74/255]; 
+main_color_brown = [204/255, 193/255, 174/255];
+
+% Lighter colors
+lighter_color_blue = [198/255, 219/255, 239/255]; 
+lighter_color_red = [252/255, 187/255, 187/255];  
+lighter_color_green = [179/255, 223/255, 178/255];
+lighter_color_brown = [229/255, 221/255, 209/255];
+
 transition_probs_post_state10 = transition_probs_post(:, 10);
 behavior = a.behavioral_data(:,1); % change this to graph the behavior you want
 
 figure;
-scatter(transition_probs_post_state10, behavior, 'filled', 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'b');
+scatter(transition_probs_post_state10, behavior, 'filled', 'MarkerFaceColor', main_color_brown);
 xlabel('Cumulative Transition Probability to State 10)');
 ylabel('Lie Rate');
-title('Transition to State 10 and Lie Rate (Post-scan)');
 box off;
 grid on; 
+set(gca,'FontSize',20);
 
 hold on;
 p = polyfit(transition_probs_post_state10, behavior, 1);
 yfit = polyval(p, transition_probs_post_state10);
-plot(transition_probs_post_state10, yfit, '-r', 'LineWidth', 2);
+plot(transition_probs_post_state10, yfit, 'LineWidth', 2);
 
 n = length(behavior);
 y_resid = behavior - yfit;
@@ -553,8 +500,10 @@ x_fit = linspace(min(transition_probs_post_state10), max(transition_probs_post_s
 y_fit = polyval(p, x_fit);
 conf = tinv(0.975, n - 2) * s_err * sqrt(1/n + (x_fit - mean(transition_probs_post_state10)).^2 / ((n - 1) * var(transition_probs_post_state10)));
 
-plot(x_fit, y_fit + conf, '--r', 'LineWidth', 1);
-plot(x_fit, y_fit - conf, '--r', 'LineWidth', 1);
+fill([x_fit, fliplr(x_fit)], [y_fit + conf, fliplr(y_fit - conf)], lighter_color_brown, 'EdgeColor', 'none', 'FaceAlpha', 0.3);
+
+plot(x_fit, y_fit, '-', 'Color', main_color_brown, 'LineWidth', 2);
+saveas(gcf,'figures/figure_5_1.jpg')
 
 %% Figure 5 - HMM and Behavior
 % Mean Interval time and behavior
@@ -576,7 +525,7 @@ p_values_pre = zeros(1, 10);
 p_values_post = zeros(1, 10);
 
 % for behavioral data column 1 to 15
-for c = 1:4
+for c = 1
     behavior = a.behavioral_data(:,c);
     %for state 1 to 10:
     for i = 1:10
@@ -606,21 +555,22 @@ end
 %% Figure 5 - HMM and Behavior
 % Visualize Interval time (pre and post) and Lie rate (All)
 % Pre:
+% Pre-scan
 interval_time_pre_state10 = mean_interval_time(1:37, 10);
 behavior = a.behavioral_data(:,1); % change this to graph the behavior you want
 
 figure;
-scatter(interval_time_pre_state10, behavior, 'filled', 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'b');
+scatter(interval_time_pre_state10, behavior, 'filled', 'MarkerFaceColor', main_color_brown);
 xlabel('Interval Time of State 10 (Pre-scan)');
 ylabel('Lie Rate');
-title('Interval Time of State 10 and Lie Rate (Pre-scan)');
 box off;
 grid on;
+set(gca,'FontSize',20);
 
 hold on;
 p_pre = polyfit(interval_time_pre_state10, behavior, 1);
 yfit_pre = polyval(p_pre, interval_time_pre_state10);
-plot(interval_time_pre_state10, yfit_pre, '-r', 'LineWidth', 2);
+plot(interval_time_pre_state10, yfit_pre, '-', 'Color', main_color_brown, 'LineWidth', 2); 
 
 n_pre = length(behavior);
 y_resid_pre = behavior - yfit_pre;
@@ -630,26 +580,26 @@ x_fit_pre = linspace(min(interval_time_pre_state10), max(interval_time_pre_state
 y_fit_pre = polyval(p_pre, x_fit_pre);
 conf_pre = tinv(0.975, n_pre - 2) * s_err_pre * sqrt(1/n_pre + (x_fit_pre - mean(interval_time_pre_state10)).^2 / ((n_pre - 1) * var(interval_time_pre_state10)));
 
-plot(x_fit_pre, y_fit_pre + conf_pre, '--r', 'LineWidth', 1);
-plot(x_fit_pre, y_fit_pre - conf_pre, '--r', 'LineWidth', 1);
+fill([x_fit_pre, fliplr(x_fit_pre)], [y_fit_pre + conf_pre, fliplr(y_fit_pre - conf_pre)], lighter_color_brown, 'EdgeColor', 'none', 'FaceAlpha', 0.3);
 hold off;
+saveas(gcf,'figures/figure_5_2.jpg')
 
-% Post:
+% Post-scan
 interval_time_post_state10 = mean_interval_time(38:74, 10);
 
 figure;
-scatter(interval_time_post_state10, behavior, 'filled', 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'b');
+scatter(interval_time_post_state10, behavior, 'filled', 'MarkerFaceColor', main_color_green);
 xlabel('Interval Time of State 10 (Post-scan)');
 ylabel('Lie Rate');
-title('Interval Time of State 10 and Lie Rate (Post-scan)');
+xlim([0 450])
 box off;
 grid on;
+set(gca,'FontSize',20);
 
 hold on;
 p_post = polyfit(interval_time_post_state10, behavior, 1);
 yfit_post = polyval(p_post, interval_time_post_state10);
-plot(interval_time_post_state10, yfit_post, '-r', 'LineWidth', 2);
-
+plot(interval_time_post_state10, yfit_post, '-', 'Color', main_color_green, 'LineWidth', 2); 
 n_post = length(behavior);
 y_resid_post = behavior - yfit_post;
 SS_resid_post = sum(y_resid_post.^2);
@@ -658,9 +608,10 @@ x_fit_post = linspace(min(interval_time_post_state10), max(interval_time_post_st
 y_fit_post = polyval(p_post, x_fit_post);
 conf_post = tinv(0.975, n_post - 2) * s_err_post * sqrt(1/n_post + (x_fit_post - mean(interval_time_post_state10)).^2 / ((n_post - 1) * var(interval_time_post_state10)));
 
-plot(x_fit_post, y_fit_post + conf_post, '--r', 'LineWidth', 1);
-plot(x_fit_post, y_fit_post - conf_post, '--r', 'LineWidth', 1);
+fill([x_fit_post, fliplr(x_fit_post)], [y_fit_post + conf_post, fliplr(y_fit_post - conf_post)], lighter_color_green, 'EdgeColor', 'none', 'FaceAlpha', 0.3);
 hold off;
+saveas(gcf,'figures/figure_5_3.jpg')
+
 
 %% Figure 5 - HMM and Behavior
 % Entropy and behavior
@@ -703,18 +654,16 @@ end
 behavior = a.behavioral_data(:,6); % change this to graph the behavior you want
 
 figure;
-scatter(Ent_rate_pre, behavior, 'filled', 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'b');
+scatter(Ent_rate_pre, behavior, 'filled', 'MarkerFaceColor', main_color_blue); 
 xlabel('HMM Entropy rate (Pre-scan)');
-ylabel('Entropy(lie enhanced)');
-title('HMM Entropy rate vs Entropy (Pre-scan)');
+ylabel('Entropy (lie enhanced)');
+set(gca,'FontSize',15);
+
 box off;
 grid on;
 
-
 hold on;
 p_pre = polyfit(Ent_rate_pre, behavior, 1);
-yfit_pre = polyval(p_pre, Ent_rate_pre);
-plot(Ent_rate_pre, yfit_pre, '-r', 'LineWidth', 2);
 
 n_pre = length(behavior);
 y_resid_pre = behavior - yfit_pre;
@@ -724,9 +673,12 @@ x_fit_pre = linspace(min(Ent_rate_pre), max(Ent_rate_pre), 100);
 y_fit_pre = polyval(p_pre, x_fit_pre);
 conf_pre = tinv(0.975, n_pre - 2) * s_err_pre * sqrt(1/n_pre + (x_fit_pre - mean(Ent_rate_pre)).^2 / ((n_pre - 1) * var(Ent_rate_pre)));
 
-plot(x_fit_pre, y_fit_pre + conf_pre, '--r', 'LineWidth', 1);
-plot(x_fit_pre, y_fit_pre - conf_pre, '--r', 'LineWidth', 1);
+fill([x_fit_pre, fliplr(x_fit_pre)], [y_fit_pre + conf_pre, fliplr(y_fit_pre - conf_pre)], lighter_color_blue, 'EdgeColor', 'none', 'FaceAlpha', 0.3);
+
+plot(x_fit_pre, y_fit_pre, '-', 'Color', main_color_blue, 'LineWidth', 2); 
 hold off;
+set(gca,'FontSize',20);
+saveas(gcf,'figures/figure_5_4.jpg')
 
 %% Figure 5 - HMM and Behavior
 % Switching Rate and model parameter
@@ -755,26 +707,30 @@ end
 
 %% Figure 5 - HMM and Behavior
 % Visualize Switching Rate and model parameter v_former_diff, v_former_diff_ses
-
-for i = [9,11] % v former diff and v former diff ses
+    num = 5;
+for i = [9, 11] % v former diff and v former diff ses
     behavior = a.behavioral_data(:,i);
+    
     figure;
-    scatter(switching_rate_pre, behavior, 'filled', 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'b');
+    scatter(switching_rate_pre, behavior, 'filled', 'MarkerFaceColor', main_color_blue); 
     xlabel('Switching Rate');
+    set(gca,'FontSize',20);
+    
     if i == 9
         ylabel('v former diff');
-        title('Switching Rate vs v former diff (Pre-scan)');
+        xlim([0.05 0.13]);
     elseif i == 11
         ylabel('v former diff ses');
-        title('Switching Rate vs v former diff ses (Pre-scan)');        
+        xlim([0.05 0.13]);
     end
+    
     box off;
     grid on;
     
     hold on;
     p_pre = polyfit(switching_rate_pre, behavior, 1);
     yfit_pre = polyval(p_pre, switching_rate_pre);
-    plot(switching_rate_pre, yfit_pre, '-r', 'LineWidth', 2);
+    plot(switching_rate_pre, yfit_pre, '-', 'Color', main_color_blue, 'LineWidth', 2); 
     
     n_pre = length(behavior);
     y_resid_pre = behavior - yfit_pre;
@@ -784,12 +740,17 @@ for i = [9,11] % v former diff and v former diff ses
     y_fit_pre = polyval(p_pre, x_fit_pre);
     conf_pre = tinv(0.975, n_pre - 2) * s_err_pre * sqrt(1/n_pre + (x_fit_pre - mean(switching_rate_pre)).^2 / ((n_pre - 1) * var(switching_rate_pre)));
     
-    plot(x_fit_pre, y_fit_pre + conf_pre, '--r', 'LineWidth', 1);
-    plot(x_fit_pre, y_fit_pre - conf_pre, '--r', 'LineWidth', 1);
+    fill([x_fit_pre, fliplr(x_fit_pre)], [y_fit_pre + conf_pre, fliplr(y_fit_pre - conf_pre)], lighter_color_blue, 'EdgeColor', 'none', 'FaceAlpha', 0.3);
+    
+    plot(x_fit_pre, y_fit_pre, '-', 'Color', main_color_blue, 'LineWidth', 2); 
     hold off;
+    filename = sprintf('figures/figure_5_%d.jpg', num);
+    num = num+1;
+    saveas(gcf,filename)
 end
 
-%% Figure 6 Task fMRI and Rest HMM
+
+%% Figure 6 Task fMRI and Rest HMM (post)
 
 % read Excel 
 file_path = 'input_data\Task\activation_data.xlsx'; 
@@ -815,7 +776,7 @@ task_fmri = eall_data;
 all_hmm_states_data = zeros(37, 33, 10);
 
 for subj_id = 1:37    
-    getMean_data = getMean(dual_hmm(subj_id + 37).hmm_subj);
+    getMean_data = getMean(dual_hmm(subj_id + 37).hmm_subj); % for +37, it means use post scan
     all_hmm_states_data(subj_id, :, :) = getMean_data;
 end
 
@@ -864,67 +825,28 @@ for state = 1:10
     end
 end
 
-%% Figure 6 Task fMRI and Rest HMM
-
-% Colors
-colors = lines(2);
-
-for state = 1:10
-    hmm_state_group_data = squeeze(all_hmm_states_data(:, :, state));
-    eall_group_data_flat = reshape(task_fmri{:, 2:end}, [], 1);  % 37 x 33 -> 1221 x 1
-    hmm_state_group_data_flat = reshape(hmm_state_group_data, [], 1);  % 37 x 33 -> 1221 x 1
-    
-    [p, h, stats] = signrank(eall_group_data_flat, hmm_state_group_data_flat);
-    
-    p_values_group(state) = p;
-    
-    % Graph!
-    figure;
-    hold on;
-
-    errorbar(1, mean(eall_group_data_flat), std(eall_group_data_flat)/sqrt(length(eall_group_data_flat)), 'o', ...
-        'Color', colors(1,:), 'MarkerFaceColor', colors(1,:), 'LineWidth', 1.5);
-    
-    errorbar(1.2, mean(hmm_state_group_data_flat), std(hmm_state_group_data_flat)/sqrt(length(hmm_state_group_data_flat)), 'o', ...
-        'Color', colors(2,:), 'MarkerFaceColor', colors(2,:), 'LineWidth', 1.5);
-    set(gca, 'XTick', [1 1.2], 'XTickLabel', {'Task', 'Post'},'fontweight','bold');
-    xlim([0.9 1.3]);
-
-    set(gca, 'TickLength', [0 0]);
-
-    ylim([min(mean([eall_group_data_flat; hmm_state_group_data_flat]) - std([eall_group_data_flat; hmm_state_group_data_flat])/sqrt(length([eall_group_data_flat; hmm_state_group_data_flat]))) - 0.1, ...
-          max(mean([eall_group_data_flat; hmm_state_group_data_flat]) + std([eall_group_data_flat; hmm_state_group_data_flat])/sqrt(length([eall_group_data_flat; hmm_state_group_data_flat]))) + 0.1]);
-
-    title(sprintf('State %d', state),'fontweight','bold');
-    xlabel('Scan Session','fontweight','bold');
-    ylabel('Activation Level','fontweight','bold');
-    %saveas(gcf, sprintf('State_%d.jpg', state));  % Save as 'State_1.jpg', 'State_2.jpg', etc.
-
-    hold off;
-end
-
-%% Figure 6 Version 2
+%% Figure 6 Post Scan
 
 % Colors for Task and Post states
 task_color = [0 0 0];  % Black for Task
-post_colors = [0 0.4470 0.7410;   % Blue
-               0.8500 0.3250 0.0980;  % Red
-               0.9290 0.6940 0.1250;  % Yellow
-               0.4940 0.1840 0.5560;  % Purple
-               0.4660 0.6740 0.1880;  % Green
-               0.3010 0.7450 0.9330;  % Cyan
-               0.6350 0.0780 0.1840;  % Dark red
-               0.7 0.7 0.7;           % Gray
-               0.8 0.6 0.6;           % Pink
-               0.75 0.75 0];          % Olive
+post_colors = [166/255 206/255 227/255;   % Light Blue
+          31/255 120/255 180/255;    % Dark Blue
+          178/255 223/255 138/255;   % Light Green
+          51/255 160/255 44/255;     % Dark Green
+          251/255 154/255 153/255;   % Light Red
+          227/255 26/255 28/255;     % Dark Red
+          253/255 191/255 111/255;   % Light Orange
+          255/255 127/255 0/255;     % Orange
+          202/255 178/255 214/255;   % Light Purple
+          106/255 61/255 154/255];   % Dark Purple
 
 % Initialize a new figure for all states
 figure;
 hold on;
 
-% Plot Task data (only once)
+% Plot Task data (place it further left)
 eall_group_data_flat = reshape(task_fmri{:, 2:end}, [], 1);  % 37 x 33 -> 1221 x 1
-errorbar(1, mean(eall_group_data_flat), std(eall_group_data_flat)/sqrt(length(eall_group_data_flat)), 'o', ...
+errorbar(0.5, mean(eall_group_data_flat), std(eall_group_data_flat)/sqrt(length(eall_group_data_flat)), 'o', ...
     'Color', task_color, 'MarkerFaceColor', task_color, 'LineWidth', 1.5);
 
 % Loop over all states and plot their Post data
@@ -932,18 +854,18 @@ for state = 1:10
     hmm_state_group_data = squeeze(all_hmm_states_data(:, :, state));
     hmm_state_group_data_flat = reshape(hmm_state_group_data, [], 1);  % 37 x 33 -> 1221 x 1
     
-    % Plot Post state data at x = 1.2 + state
-    errorbar(1.2 + state, mean(hmm_state_group_data_flat), std(hmm_state_group_data_flat)/sqrt(length(hmm_state_group_data_flat)), 'o', ...
+    % Plot Post state data at x = 2 + state
+    errorbar(2 + state, mean(hmm_state_group_data_flat), std(hmm_state_group_data_flat)/sqrt(length(hmm_state_group_data_flat)), 'o', ...
         'Color', post_colors(state, :), 'MarkerFaceColor', post_colors(state, :), 'LineWidth', 1.5);
 end
 
-% Set x-axis labels: Task, State1_Post, State2_Post, ..., State10_Post
+% Set x-axis labels: Task, State1_Post, ..., State10_Post
 x_labels = {'Task', 'State1 Post', 'State2 Post', 'State3 Post', 'State4 Post', ...
             'State5 Post', 'State6 Post', 'State7 Post', 'State8 Post', 'State9 Post', 'State10 Post'};
-set(gca, 'XTick', [1, 2.2:1:11.2], 'XTickLabel', x_labels, 'fontweight', 'bold');
+set(gca, 'XTick', [0.5, 3:1:12], 'XTickLabel', x_labels, 'fontweight', 'bold', 'XTickLabelRotation', 45);
 
 % Set axis limits and labels
-xlim([0.9, 11.5]);
+xlim([0, 12.5]);  % Adjust the x-axis limits to leave space for Task
 set(gca, 'TickLength', [0 0]);
 
 % Set the y-axis limits based on the minimum and maximum values
@@ -951,11 +873,127 @@ ylim([min(mean([eall_group_data_flat; hmm_state_group_data_flat]) - std([eall_gr
       max(mean([eall_group_data_flat; hmm_state_group_data_flat]) + std([eall_group_data_flat; hmm_state_group_data_flat])/sqrt(length([eall_group_data_flat; hmm_state_group_data_flat]))) + 0.1]);
 
 % Add labels and title
-%xlabel('Scan Session', 'fontweight', 'bold');
 ylabel('Activation Level', 'fontweight', 'bold');
-title('Task vs Post State Activation Levels', 'fontweight', 'bold');
+set(gca,'FontSize',15);
 
 hold off;
+saveas(gcf,'figures/figure_6_1.jpg')
+
+%% Figure 6 Task fMRI and Rest HMM (pre)
+
+% Let's start to compare Task fMRI activation and rest activation
+p_values_group = zeros(10, 1);
+significant_states = cell(10, 1);
+direction = cell(10, 1); 
+
+all_hmm_states_data = zeros(37, 33, 10);
+
+for subj_id = 1:37    
+    getMean_data = getMean(dual_hmm(subj_id).hmm_subj); % it means use pre scan
+    all_hmm_states_data(subj_id, :, :) = getMean_data;
+end
+
+for state = 1:10
+    hmm_state_group_data = squeeze(all_hmm_states_data(:, :, state));
+    
+    task_fmri_data = reshape(task_fmri{:, 2:end}, [], 1);  % 37 x 33 -> 1221 x 1
+    hmm_state_group_data_flat = reshape(hmm_state_group_data, [], 1);  % 37 x 33 -> 1221 x 1
+    
+    [p, h, stats] = signrank(task_fmri_data, hmm_state_group_data_flat);   
+    p_values_group(state) = p;
+    
+    % Direction
+    mean_task_fmri = mean(task_fmri_data);
+    mean_hmm = mean(hmm_state_group_data_flat);
+    
+    if mean_hmm > mean_task_fmri
+        direction{state} = 'Increase';  % if HMM increase compare to task
+    elseif mean_hmm < mean_task_fmri
+        direction{state} = 'Decrease';  % if HMM decrease compare to task
+    end
+    
+    % only show significant
+    if p < 0.05
+        significant_states{state} = sprintf('State %d is significant with p-value: %.4f, Direction: %s', state, p, direction{state});
+    end
+end
+
+disp('significant:');
+for state = 1:10
+    if ~isempty(significant_states{state})
+        disp(significant_states{state});
+    end
+end
+
+% fdr correction
+p_values_vector = p_values_group(:);
+
+[~, ~, ~, adj_p_values] = fdr_bh(p_values_vector);
+
+disp('FDR corrected significant states:');
+for state = 1:10
+    if adj_p_values(state) < 0.05
+        fprintf('State %d is significant after FDR correction with p-value: %.4f, Direction: %s\n', ...
+                state, adj_p_values(state), direction{state});
+    end
+end
+
+%% Figure 6 Pre Scan
+
+% Colors for Task and Post states
+task_color = [0 0 0];  % Black for Task
+post_colors = [166/255 206/255 227/255;   % Light Blue
+               31/255 120/255 180/255;    % Dark Blue
+               178/255 223/255 138/255;   % Light Green
+               51/255 160/255 44/255;     % Dark Green
+               251/255 154/255 153/255;   % Light Red
+               227/255 26/255 28/255;     % Dark Red
+               253/255 191/255 111/255;   % Light Orange
+               255/255 127/255 0/255;     % Orange
+               202/255 178/255 214/255;   % Light Purple
+               106/255 61/255 154/255];   % Dark Purple
+
+% Initialize a new figure for all states
+figure;
+hold on;
+
+% Loop over all states and plot their Post data first
+for state = 1:10
+    hmm_state_group_data = squeeze(all_hmm_states_data(:, :, state));
+    hmm_state_group_data_flat = reshape(hmm_state_group_data, [], 1);  % 37 x 33 -> 1221 x 1
+    
+    % Plot Post state data at x = state (instead of 1.2 + state)
+    errorbar(state, mean(hmm_state_group_data_flat), std(hmm_state_group_data_flat)/sqrt(length(hmm_state_group_data_flat)), 'o', ...
+        'Color', post_colors(state, :), 'MarkerFaceColor', post_colors(state, :), 'LineWidth', 1.5);
+end
+
+% Now, plot Task data at the last position
+eall_group_data_flat = reshape(task_fmri{:, 2:end}, [], 1);  % 37 x 33 -> 1221 x 1
+errorbar(11.5, mean(eall_group_data_flat), std(eall_group_data_flat)/sqrt(length(eall_group_data_flat)), 'o', ...
+    'Color', task_color, 'MarkerFaceColor', task_color, 'LineWidth', 1.5);
+
+% Set x-axis labels: 
+x_labels = {'State1 Pre', 'State2 Pre', 'State3 Pre', 'State4 Pre', ...
+            'State5 Pre', 'State6 Pre', 'State7 Pre', 'State8 Pre', 'State9 Pre', 'State10 Pre', 'Task'};
+
+% 修改 XTick 为状态和 Task 对应的 x 位置
+set(gca, 'XTick', [1:10, 11.5], 'XTickLabel', x_labels, 'fontweight', 'bold', 'XTickLabelRotation', 45);
+
+% Set axis limits and labels
+xlim([0.9, 12]);  % 调整x轴范围以容纳Task
+set(gca, 'TickLength', [0 0]);
+
+% Set the y-axis limits based on the minimum and maximum values
+ylim([min(mean([eall_group_data_flat; hmm_state_group_data_flat]) - std([eall_group_data_flat; hmm_state_group_data_flat])/sqrt(length([eall_group_data_flat; hmm_state_group_data_flat]))) - 0.1, ...
+      max(mean([eall_group_data_flat; hmm_state_group_data_flat]) + std([eall_group_data_flat; hmm_state_group_data_flat])/sqrt(length([eall_group_data_flat; hmm_state_group_data_flat]))) + 0.1]);
+
+% Add labels and title
+ylabel('Activation Level', 'fontweight', 'bold');
+title('Task vs Pre State Activation Levels', 'fontweight', 'bold');
+set(gca,'FontSize',15);
+
+hold off;
+saveas(gcf,'figures/figure_6_2.jpg')
 
 
 %% Table 1: 33 brain area activation changes in each state (Rest fMRI HMM vs Task fMRI)
@@ -1037,7 +1075,7 @@ for state = 1:10
     fprintf('State %d Significant brain area is saved to "%s"\n', state, output_filename);
 end
 
-%% Figure 6 Task fMRI and Rest HMM IS-RSA analysis
+%% Figure 7 Task fMRI and Rest HMM IS-RSA analysis
 clc
 HMM_pre_data = zeros(37, 33);
 HMM_post_data = zeros(37, 33);
@@ -1083,48 +1121,52 @@ p_value_permutation_post = mean(permuted_correlations_post >= correlation_post);
 fprintf('HMM_pre and Task correlation: %.4f, Permutation p value: %.4f\n', correlation_pre, p_value_permutation_pre);
 fprintf('HMM_post and Task correlation: %.4f, Permutation p value: %.4f\n', correlation_post, p_value_permutation_post);
 
-%% Figure 6 Task fMRI and Rest HMM IS-RSA analysis
+%% Figure 7 Task fMRI and Rest HMM IS-RSA analysis
 
 % HMM Pre RSA matrix
 figure;
 imagesc(HMM_pre_similarity_matrix);
 colorbar;
 title('HMM Pre Similarity Matrix');
-xlabel('Subjects');
-ylabel('Subjects');
+set(gca, 'FontSize', 15);
 axis square;
+
+saveas(gcf,'figures/figure_7_1.jpg')
 
 % HMM post RSA matrix
 figure;
 imagesc(HMM_post_similarity_matrix); 
 colorbar;
 title('HMM Post Similarity Matrix');
-xlabel('Subjects');
-ylabel('Subjects');
+set(gca, 'FontSize', 15);
 axis square;
+saveas(gcf,'figures/figure_7_2.jpg')
 
 % Task RSA matrix
 figure;
 imagesc(task_activation_similarity_matrix); 
 colorbar;
 title('Task Activation Similarity Matrix');
-xlabel('Subjects');
-ylabel('Subjects');
+set(gca, 'FontSize', 15);
 axis square;
+saveas(gcf,'figures/figure_7_3.jpg')
 
 % Correlation graph Pre and Task
 figure;
-scatter(HMM_pre_distances, task_activation_distances, 'filled', 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'b');
+scatter(HMM_pre_distances, task_activation_distances, 'filled', 'MarkerFaceColor', main_color_blue)
 xlabel('HMM Pre Distances');
 ylabel('Task Activation Distances');
+xlim([0.2 1.5])
 title(sprintf('r = %.3f, PVAL = %.3f', correlation_pre, p_value_pre));
 box off;
 grid on;
+set(gca, 'FontSize', 20);
+
 
 hold on;
 p_pre = polyfit(HMM_pre_distances, task_activation_distances, 1);
 yfit_pre = polyval(p_pre, HMM_pre_distances);
-plot(HMM_pre_distances, yfit_pre, '-r', 'LineWidth', 2);
+plot(HMM_pre_distances, yfit_pre,'Color', main_color_blue, 'LineWidth', 2);
 
 n_pre = length(task_activation_distances);
 y_resid_pre = task_activation_distances - yfit_pre;
@@ -1134,24 +1176,27 @@ x_fit_pre = linspace(min(HMM_pre_distances), max(HMM_pre_distances), 100);
 y_fit_pre = polyval(p_pre, x_fit_pre);
 conf_pre = tinv(0.975, n_pre - 2) * s_err_pre * sqrt(1/n_pre + (x_fit_pre - mean(HMM_pre_distances)).^2 / ((n_pre - 1) * var(HMM_pre_distances)));
 
-plot(x_fit_pre, y_fit_pre + conf_pre, '--r', 'LineWidth', 1);
-plot(x_fit_pre, y_fit_pre - conf_pre, '--r', 'LineWidth', 1);
+fill([x_fit_pre, fliplr(x_fit_pre)], [y_fit_pre + conf_pre, fliplr(y_fit_pre - conf_pre)], lighter_color_blue, 'EdgeColor', 'none', 'FaceAlpha', 0.3);
+
+plot(x_fit_pre, y_fit_pre, '-', 'Color', main_color_blue, 'LineWidth', 2);
 hold off;
+saveas(gcf,'figures/figure_7_4.jpg')
 
 % Correlation graph Post and Task
 
 figure;
-scatter(HMM_post_distances, task_activation_distances, 'filled', 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'g');
+scatter(HMM_post_distances, task_activation_distances, 'filled', 'MarkerFaceColor', main_color_green); 
 xlabel('HMM Post Distances');
 ylabel('Task Activation Distances');
 title(sprintf('r = %.3f, PVAL = %.3f', correlation_post, p_value_post));
 box off;
 grid on;
+set(gca, 'FontSize', 20);
 
 hold on;
 p_post = polyfit(HMM_post_distances, task_activation_distances, 1);
 yfit_post = polyval(p_post, HMM_post_distances);
-plot(HMM_post_distances, yfit_post, '-r', 'LineWidth', 2);
+plot(HMM_post_distances, yfit_post, '-', 'Color', main_color_green, 'LineWidth', 2); 
 
 n_post = length(task_activation_distances);
 y_resid_post = task_activation_distances - yfit_post;
@@ -1161,11 +1206,13 @@ x_fit_post = linspace(min(HMM_post_distances), max(HMM_post_distances), 100);
 y_fit_post = polyval(p_post, x_fit_post);
 conf_post = tinv(0.975, n_post - 2) * s_err_post * sqrt(1/n_post + (x_fit_post - mean(HMM_post_distances)).^2 / ((n_post - 1) * var(HMM_post_distances)));
 
-plot(x_fit_post, y_fit_post + conf_post, '--r', 'LineWidth', 1);
-plot(x_fit_post, y_fit_post - conf_post, '--r', 'LineWidth', 1);
-hold off;
+fill([x_fit_post, fliplr(x_fit_post)], [y_fit_post + conf_post, fliplr(y_fit_post - conf_post)], lighter_color_green, 'EdgeColor', 'none', 'FaceAlpha', 0.3);
 
-%% Figure 7 Rest HMM and Behavior IS-RSA
+plot(x_fit_post, y_fit_post, '-', 'Color', main_color_green, 'LineWidth', 2);
+hold off;
+saveas(gcf,'figures/figure_7_5.jpg')
+
+%% Figure 8 Rest HMM and Behavior IS-RSA
 %FO and behavior
 for c = 1:15
     behavior = a.behavioral_data(1:37,c); % change this to select which behaivor measure
@@ -1217,7 +1264,7 @@ for c = 1:15
 
 end
 
-%% Figure 7 Rest HMM and Behavior IS-RSA
+%% Figure 8 Rest HMM and Behavior IS-RSA
 
 % Get TP for every participant
 n_subjects = 74;
@@ -1300,7 +1347,7 @@ for c = 1:15
     fprintf('FO_Post correlation: %.4f, Permutation p value: %.4f\n', correlation_post, p_value_permutation_post);
 end
 
-%% Figure 7 Rest HMM and Behavior IS-RSA
+%% Figure 8 Rest HMM and Behavior IS-RSA
 
 % Graph:
 % 1. FO pre, State TP Pre, Entropy and Lie rate (Random) RSA Matrix
@@ -1316,9 +1363,9 @@ FO_pre_similarity_matrix_upper(FO_pre_similarity_matrix_upper == 0) = NaN;
 imagesc(FO_pre_similarity_matrix_upper);
 colorbar;
 title('FO Matrix (Pre-scan)');
-xlabel('Subjects');
-ylabel('Subjects');
+set(gca, 'FontSize', 15);
 axis square;
+saveas(gcf,'figures/figure_8_1.jpg')
 
 % State Transition Pre RSA matrix
 figure;
@@ -1328,9 +1375,9 @@ trans_pre_similarity_matrix_upper(trans_pre_similarity_matrix_upper == 0) = NaN;
 imagesc(trans_pre_similarity_matrix_upper);
 colorbar;
 title('State Transition Matrix (Pre-scan)');
-xlabel('Subjects');
-ylabel('Subjects');
+set(gca, 'FontSize', 15);
 axis square;
+saveas(gcf,'figures/figure_8_2.jpg')
 
 % Lie Rate Random
 figure;
@@ -1340,9 +1387,9 @@ lie_rate_distance_matrix_tril(lie_rate_distance_matrix_tril == 0) = NaN;
 imagesc(lie_rate_distance_matrix_tril); 
 colorbar;
 title('Lie Rate Matrix (Random Enhanced)');
-xlabel('Subjects');
-ylabel('Subjects');
+set(gca, 'FontSize', 15);
 axis square;
+saveas(gcf,'figures/figure_8_3.jpg')
 
 % Entropy Random
 figure;
@@ -1352,14 +1399,12 @@ Entropy_distance_matrix_tril(Entropy_distance_matrix_tril == 0) = NaN;
 imagesc(Entropy_distance_matrix_tril);
 colorbar;
 title('Entropy Matrix (Random Enhanced)');
-xlabel('Subjects');
-ylabel('Subjects');
+set(gca, 'FontSize', 15);
 axis square;
+saveas(gcf,'figures/figure_8_4.jpg')
 
 % Graph 2 FO and Lie rate
-
 FO_pre_similarity_matrix = corr(FO_pre'); 
-
 FO_pre_distance_matrix = 1 - FO_pre_similarity_matrix;
 lower_triangular_indices = find(tril(ones(size(FO_pre_distance_matrix)), -1)); 
 distances_FO_pre = FO_pre_distance_matrix(lower_triangular_indices);
@@ -1368,17 +1413,18 @@ behavior_distance_matrix = squareform(pdist(a.behavioral_data(1:37,4), 'euclidea
 distances_behavior = behavior_distance_matrix(lower_triangular_indices);
 
 figure;
-scatter(distances_FO_pre, distances_behavior, 'filled', 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'b');
+scatter(distances_FO_pre, distances_behavior, 'filled', 'MarkerFaceColor', main_color_blue); 
 xlabel('FO Pre Distances');
 ylabel('Lie Rate Distances');
-title('r = 0.1099, Perm PVAL = 0.0028');
+xlim([0 1.8])
 box off;
 grid on;
+set(gca, 'FontSize', 20);
 
 hold on;
 p = polyfit(distances_FO_pre, distances_behavior, 1);
 yfit_pre = polyval(p, distances_FO_pre);
-plot(distances_FO_pre, yfit_pre, '-r', 'LineWidth', 2);
+plot(distances_FO_pre, yfit_pre, '-', 'Color', main_color_blue, 'LineWidth', 2); 
 
 n = length(distances_behavior);
 y_resid = distances_behavior - yfit_pre;
@@ -1388,13 +1434,14 @@ x_fit = linspace(min(distances_FO_pre), max(distances_FO_pre), 100);
 y_fit = polyval(p, x_fit);
 conf_pre = tinv(0.975, n - 2) * s_err * sqrt(1/n + (x_fit - mean(distances_FO_pre)).^2 / ((n - 1) * var(distances_FO_pre)));
 
-plot(x_fit, y_fit + conf_pre, '--r', 'LineWidth', 1);
-plot(x_fit, y_fit - conf_pre, '--r', 'LineWidth', 1);
+fill([x_fit, fliplr(x_fit)], [y_fit + conf_pre, fliplr(y_fit - conf_pre)], lighter_color_blue, 'EdgeColor', 'none', 'FaceAlpha', 0.3);
+
+plot(x_fit, y_fit, '-', 'Color', main_color_blue, 'LineWidth', 2); 
 hold off;
+saveas(gcf,'figures/figure_8_5.jpg')
 
 % Graph 3 FO and Entropy
 FO_pre_similarity_matrix = corr(FO_pre'); 
-
 FO_pre_distance_matrix = 1 - FO_pre_similarity_matrix;
 lower_triangular_indices = find(tril(ones(size(FO_pre_distance_matrix)), -1)); 
 distances_FO_pre = FO_pre_distance_matrix(lower_triangular_indices);  
@@ -1403,17 +1450,19 @@ behavior_distance_matrix = squareform(pdist(a.behavioral_data(1:37,8), 'euclidea
 distances_behavior = behavior_distance_matrix(lower_triangular_indices);
 
 figure;
-scatter(distances_FO_pre, distances_behavior, 'filled', 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'b');
+scatter(distances_FO_pre, distances_behavior, 'filled', 'MarkerFaceColor', main_color_blue);
 xlabel('FO Pre Distances');
 ylabel('Entropy Distances');
-title('r = 0.1146, Perm PVAL = 0.0012');
+xlim([0 1.8])
 box off;
 grid on;
+set(gca, 'FontSize', 20);
+
 
 hold on;
 p = polyfit(distances_FO_pre, distances_behavior, 1);
 yfit_pre = polyval(p, distances_FO_pre);
-plot(distances_FO_pre, yfit_pre, '-r', 'LineWidth', 2);
+plot(distances_FO_pre, yfit_pre, '-', 'Color', main_color_blue, 'LineWidth', 2); 
 
 n = length(distances_behavior);
 y_resid = distances_behavior - yfit_pre;
@@ -1423,13 +1472,14 @@ x_fit = linspace(min(distances_FO_pre), max(distances_FO_pre), 100);
 y_fit = polyval(p, x_fit);
 conf_pre = tinv(0.975, n - 2) * s_err * sqrt(1/n + (x_fit - mean(distances_FO_pre)).^2 / ((n - 1) * var(distances_FO_pre)));
 
-plot(x_fit, y_fit + conf_pre, '--r', 'LineWidth', 1);
-plot(x_fit, y_fit - conf_pre, '--r', 'LineWidth', 1);
+fill([x_fit, fliplr(x_fit)], [y_fit + conf_pre, fliplr(y_fit - conf_pre)], lighter_color_blue, 'EdgeColor', 'none', 'FaceAlpha', 0.3);
+
+plot(x_fit, y_fit, '-', 'Color', main_color_blue, 'LineWidth', 2); 
 hold off;
+saveas(gcf,'figures/figure_8_6.jpg')
 
 % Graph 4 Trans and Lie rate
-trans_pre_similarity_matrix = corr(trans_pre(:,:)');
-
+trans_pre_similarity_matrix = corr(trans_pre(:,:)' );
 distance_matrix_pre = 1 - trans_pre_similarity_matrix;  
 lower_triangular_indices = find(tril(ones(size(distance_matrix_pre)), -1)); 
 distances_HMM = distance_matrix_pre(lower_triangular_indices);  
@@ -1438,17 +1488,18 @@ behavior_distance_matrix = squareform(pdist(a.behavioral_data(1:37,4), 'euclidea
 distances_behavior = behavior_distance_matrix(lower_triangular_indices); 
 
 figure;
-scatter(distances_HMM, distances_behavior, 'filled', 'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'b');
+scatter(distances_HMM, distances_behavior, 'filled', 'MarkerFaceColor', main_color_blue); 
 xlabel('State Transition Distances');
 ylabel('Lie Rate Distances');
-title('r = 0.120, Perm PVAL = 0.038');
+xlim([0.39 1])
 box off;
 grid on;
+set(gca, 'FontSize', 20);
 
 hold on;
 p = polyfit(distances_HMM, distances_behavior, 1);
 yfit_pre = polyval(p, distances_HMM);
-plot(distances_HMM, yfit_pre, '-r', 'LineWidth', 2);
+plot(distances_HMM, yfit_pre, '-', 'Color', main_color_blue, 'LineWidth', 2);
 
 n = length(distances_behavior);
 y_resid = distances_behavior - yfit_pre;
@@ -1458,7 +1509,8 @@ x_fit = linspace(min(distances_HMM), max(distances_HMM), 100);
 y_fit = polyval(p, x_fit);
 conf_pre = tinv(0.975, n - 2) * s_err * sqrt(1/n + (x_fit - mean(distances_HMM)).^2 / ((n - 1) * var(distances_HMM)));
 
-plot(x_fit, y_fit + conf_pre, '--r', 'LineWidth', 1);
-plot(x_fit, y_fit - conf_pre, '--r', 'LineWidth', 1);
-hold off;
+fill([x_fit, fliplr(x_fit)], [y_fit + conf_pre, fliplr(y_fit - conf_pre)], lighter_color_blue, 'EdgeColor', 'none', 'FaceAlpha', 0.3);
 
+plot(x_fit, y_fit, '-', 'Color', main_color_blue, 'LineWidth', 2); 
+hold off;
+saveas(gcf,'figures/figure_8_7.jpg')
