@@ -2,7 +2,7 @@
 
 Code and data for **The alternated brain states**, accompanying the preprint: 
 
-**E., Wang, XJ, Xu, R., J. H, Wu (2024). The alternated brain states in resting state after moral decisions.** *bioRxiv* <br/>
+**E, Wang, XJ, Xu, R, Jiang. H, Wu (2024). The alternated brain states in resting state after moral decisions.** *bioRxiv* <br/>
 ___
 
 **This repository contains:**
