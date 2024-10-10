@@ -3,17 +3,18 @@
 Code and data for **The alternated brain states**, accompanying the preprint: 
 
 **E.,Wang, XJ, Xu, R., J. H, Wu (2024). The alternated brain states in resting state after moral decisions.** *bioRxiv* <br/>
+
+
 ___
 ## **Abstract**
+Instances of dishonesty may induce feelings of anxiety or guilt, leading to evident "after-effects" that impact subsequent behaviour and neural activity. However, how constantly switching moral decisions affects the brain states and what behavioural variable is primarily responsible
+for the changing effect is still unclear. This study aimed to investigate how moral decisions influence resting brain states using rs-fMRI data collected before and after an information-passing task involving dishonest choices with rewards. We used multimodal fMRI (task-fMRI and rs-fMRI) and behavioural data and utilized an advanced computational model called the Hidden Markov Model (HMM) to explore brain dynamics during this process.
 
 ___
 ## **Introduction**
 
 ___
 ## **Methodology**
-
-___
-## **Requirements**
 
 ___
 ## **Code**
