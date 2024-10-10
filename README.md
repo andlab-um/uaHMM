@@ -25,7 +25,7 @@ ___
 root
  ├── ua_code # Main analysis code
  │    ├── HMM-MAR-master # External Matlab package for HMM
- │    ├── figures # directory containing all output figure from HMM analysis code
+ │    ├── figures # directory containing all output figures from HMM analysis code
  │    ├── input_data # input data, contains fmri and behavioral data
  │    │   ├── Task # Contain task fmri data
  │    │   │    ├── subj_data # all subjects' data in task
@@ -44,13 +44,13 @@ root
  │    │   ├── neurosynth_output # Contain neurosynth summary on all keywords
  │    │
  │    ├── output_HMM # directory containing folder related to HMM output, like state activation, transition probability and so on
- │    │   ├── Brain_states # contain 10 states activation
+ │    │   ├── Brain_states # contains 10 states of activation
  │    │   │   ├── output_states_tian # tian network activation 
  │    │   │   ├── output_states_yeo # yeo network activation 
  │    │   │   ├── covars.mat # HMM 10 states covariance
  │    │   │   ├── Mean_states.mat # 10 state activation on tian+yeo network
  │    │   │   
- │    │   ├── C-H_scores # contain K = 2 to 10 cross validated C-H score
+ │    │   ├── C-H_scores # contain K = 2 to 10 cross-validated C-H score
  │    │   │   ├── K2
  │    │   │   ├── K3
  │    │   │   ├── K4
@@ -63,8 +63,8 @@ root
  │    │   │   
  │    │   │
  │    │   ├── HMM_Model_K10 # contain HMM model
- │    │   ├── TP # contain all subjects' state transition probability
- │    │   ├── Task # contain significant comparison paris between task and post rest in each state 
+ │    │   ├── TP # contains all subjects' state transition probability
+ │    │   ├── Task # contains significant comparison pairs between task and post rest in each state 
  │    │   ├── dNBS_settings # settings for dNBS
  │    │   │   ├── design_matrix.txt # paired-t design matrix
  │    │   │   ├── MNI.txt # a dummy co-ordinate just for visualizing state transition
@@ -83,11 +83,11 @@ ___
 ## How to use
 * To start replicate the figures, you should go to [HMM_analysis_All_in_one.m](ua_code/HMM_analysis_All_in_one.m).<br />
 
-* In the code, you can find instruction to replicate all figure, remember to set [ua_code](ua_code) as  working directory and add [HMM-MAR_master](ua_code/HMM-MAR-master) folder and sub folder into MatLab path.<br />
+* In the code, you can find instructions to replicate all figures, remember to set [ua_code](ua_code) as the working directory and add [HMM-MAR_master](ua_code/HMM-MAR-master) folder and subfolder into the MatLab path.<br />
 
 * In order to run the directional Network-Based Statistics (dNBS), you should enter "dNBS" in MatLab command line window, then follow the instruction provided in [HMM_analysis_All_in_one.m](ua_code/HMM_analysis_All_in_one.m) to execute dNBS.
 
-* There are 2 python code that need to run separately from Matlab. The first is the code for brain state visualization [Figure3.ipynb](ua_code/Figure3.ipynb). The second is for neurosynth decoding [neurosynth.ipynb](ua/code/neurosynth/neurosynth.ipynb).
+* There are 2 python codes that need to run separately from Matlab. The first is the code for brain state visualization [Figure3.ipynb](ua_code/Figure3.ipynb). The second is for neurosynth decoding [neurosynth.ipynb](ua/code/neurosynth/neurosynth.ipynb).
 ___
 
 For bug reports, please contact Eric Wang ([eric.wang2004nz@link.cuhk.edu.hk](mailto:eric.wang2004nz@link.cuhk.edu.hk), or through X [@ericwan53761434](https://x.com/ericwan53761434).
