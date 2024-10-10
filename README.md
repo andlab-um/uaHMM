@@ -2,7 +2,22 @@
 
 Code and data for **The alternated brain states**, accompanying the preprint: 
 
-**E, Wang., XJ, Xu., R, Jiang., H, Wu (2024). The alternated brain states in resting state after moral decisions.** *bioRxiv* <br/>
+**E.,Wang, XJ, Xu, R., J. H, Wu (2024). The alternated brain states in resting state after moral decisions.** *bioRxiv* <br/>
+___
+## **Abstract**
+
+___
+## **Introduction**
+
+___
+## **Methodology**
+
+___
+## **Requirements**
+
+___
+## **Code**
+
 ___
 
 **This repository contains:**
@@ -28,15 +43,13 @@ root
  │    │   ├── State_activation # input for neurosynth
  │    │   ├── neurosynth_output # Contain neurosynth summary on all keywords
  │    │
- │    │
  │    ├── output_HMM # directory containing folder related to HMM output, like state activation, transition probability and so on
  │    │   ├── Brain_states # contain 10 states activation
  │    │   │   ├── output_states_tian # tian network activation 
  │    │   │   ├── output_states_yeo # yeo network activation 
  │    │   │   ├── covars.mat # HMM 10 states covariance
  │    │   │   ├── Mean_states.mat # 10 state activation on tian+yeo network
- │    │   │
- │    │   │
+ │    │   │   
  │    │   ├── C-H_scores # contain K = 2 to 10 cross validated C-H score
  │    │   │   ├── K2
  │    │   │   ├── K3
@@ -64,4 +77,19 @@ root
  ├── NBSDirected1.0.1 # External Matlab package for dNBS
 
 ```
+
+**Note**: to properly run all scripts, you need to set the ua_code of this repository as your working directory.
+___
+## How to use
+* To start replicate the figures, you should go to [HMM_analysis_All_in_one.m](ua_code/HMM_analysis_All_in_one.m).<br />
+
+* In the code, you can find instruction to replicate all figure, remember to set [ua_code](ua_code) as  working directory and add [HMM-MAR_master](ua_code/HMM-MAR-master) folder and sub folder into MatLab path.<br />
+
+* In order to run the directional Network-Based Statistics (dNBS), you should enter "dNBS" in MatLab command line window, then follow the instruction provided in [HMM_analysis_All_in_one.m](ua_code/HMM_analysis_All_in_one.m) to execute dNBS.
+
+* There are 2 python code that need to run separately from Matlab. The first is the code for brain state visualization [Figure3.ipynb](ua_code/Figure3.ipynb). The second is for neurosynth decoding [neurosynth.ipynb](ua/code/neurosynth/neurosynth.ipynb).
+___
+
+For bug reports, please contact Eric Wang ([eric.wang2004nz@link.cuhk.edu.hk](mailto:eric.wang2004nz@link.cuhk.edu.hk), or through X [@ericwan53761434](https://x.com/ericwan53761434).
+
 
