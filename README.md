@@ -2,7 +2,7 @@
 
 Code and data for **The alternated brain states**, accompanying the preprint: 
 
-**E, Wang, XJ, Xu, R, Jiang. H, Wu (2024). The alternated brain states in resting state after moral decisions.** *bioRxiv* <br/>
+**E, Wang., XJ, Xu., R, Jiang., H, Wu (2024). The alternated brain states in resting state after moral decisions.** *bioRxiv* <br/>
 ___
 
 **This repository contains:**
@@ -28,13 +28,15 @@ root
  │    │   ├── State_activation # input for neurosynth
  │    │   ├── neurosynth_output # Contain neurosynth summary on all keywords
  │    │
+ │    │
  │    ├── output_HMM # directory containing folder related to HMM output, like state activation, transition probability and so on
  │    │   ├── Brain_states # contain 10 states activation
  │    │   │   ├── output_states_tian # tian network activation 
  │    │   │   ├── output_states_yeo # yeo network activation 
  │    │   │   ├── covars.mat # HMM 10 states covariance
  │    │   │   ├── Mean_states.mat # 10 state activation on tian+yeo network
- │    │   │   
+ │    │   │
+ │    │   │
  │    │   ├── C-H_scores # contain K = 2 to 10 cross validated C-H score
  │    │   │   ├── K2
  │    │   │   ├── K3
