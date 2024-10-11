@@ -21,14 +21,14 @@ This repository includes code to replicate the analysis and produce figures in t
 As shown in the picture above, the HMM results in 10 discrete states. To quantify the functinoal relevance of these inferred states, we used Neurosynth decoding model to map the spatial expression of each state onto Neurosynth topics.
 
 <div align=center>
-    <img src="README_graph/Summary_2.JPG" alt="Neurosynth result" style="width: 500px;" />  
+    <img src="README_graph/Summary_2.JPG" alt="Neurosynth result" style="width: 800px;" />  
 </div>
 <br/>
 
 Post-hoc analysis shows that the interval time (as measure of frequency in visiting the state) of state 10, the state transition rate, and model entropy are significantly related to several behavioral data, and one of these results is shown below (refer to the paper for details)
 
 <div align=center>
-    <img src="README_graph/Summary_1.JPG" alt="Behavioral HMM summary" style="width: 500px;" />  
+    <img src="README_graph/Summary_1.JPG" alt="Behavioral HMM summary" style="width: 1000px;" />  
 </div>
 <br/>
 
