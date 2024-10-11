@@ -67,11 +67,11 @@ where \( m_k \) and \( C_k \) are state means and covariances, and \( k \) index
 
 ### Inferences
 
-Variational Bayesian (VB) approach is employed for inference in Hidden Markov Models (HMMs). VB approximates the posterior distribution of the model parameters analytically by iteratively updating parameters on batches. Here, the parameters include
+Variational Bayesian (VB) approach is employed for inference in Hidden Markov Models (HMMs). VB approximate the posterior distribution of the model parameters analytically by iteratively updating parameter on batches. Here, the parameters include
 
-* The transition probability matrix, p(θ_t | θ_{t-1}).
-* The hidden state at each time point, θ_t.
-* The observation model parameters: state means, m_k, and covariances, C_k.
+* The transition probability matrix, \( p(\theta_t | \theta_{t-1}) \).
+* The hidden state at each time point, \( \theta_t \).
+* The observation model parameters: state means, \( m_k \), and covariances, \( C_k \)
 
 Simply, the way VB work is:
 
