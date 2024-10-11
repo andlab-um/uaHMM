@@ -15,11 +15,7 @@ ___
 
 ## **Methodology**
 
-<p align="center">
-    <video width="500" controls>
-        <source src="hmm_process.mp4" type="video/mp4">
-    </video>
-</p>
+<img src="hmm_process.gif" alt="dynamics" /><br/>
 
 ___
 ## **Code**
