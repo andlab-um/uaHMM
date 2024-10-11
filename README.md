@@ -21,7 +21,7 @@ This repository includes code to replicate the analysis and produce figures in t
 As shown in the picture above, the HMM results in 10 discrete states. To quantify the functinoal relevance of these inferred states, we used Neurosynth decoding model to map the spatial expression of each state onto Neurosynth topics.
 
 <div align=center>
-    <img src="README_graph/Summary_2.JPG" alt="Neurosynth result" style="width: 800px;" />  
+    <img src="README_graph/Summary_2.JPG" alt="Neurosynth result" style="width: 1000px;" />  
 </div>
 <br/>
 
@@ -69,7 +69,7 @@ where \( m_k \) and \( C_k \) are state means and covariances, and \( k \) index
 
 Variational Bayesian (VB) approach is employed for inference in Hidden Markov Models (HMMs). VB approximate the posterior distribution of the model parameters analytically by iteratively updating parameter on batches. Here, the parameters include
 
-* The transition probability matrix, \( p(\theta_t | \theta_{t-1}) \).
+* The transition probability matrix, $$ \( p(\theta_t | \theta_{t-1}) \).$$ 
 * The hidden state at each time point, \( \theta_t \).
 * The observation model parameters: state means, \( m_k \), and covariances, \( C_k \)
 
