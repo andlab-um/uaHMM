@@ -13,12 +13,12 @@ for the changing effect is still unclear. This study aimed to investigate how mo
 ___
 ## **Introduction**
 
-___
 ## **Methodology**
+
 <p align="center">
-    <img src="HMM.png" alt="HMM" style="zoom:10%;" />
+    <img src="HMM.png" alt="HMM" width="300"/> 
 </p>
-<br/>
+
 ___
 ## **Code**
 
