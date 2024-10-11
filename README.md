@@ -55,15 +55,15 @@ $$
 p(x_{1:T}, \theta_{1:T}) = p(x_1 | \theta_1) p(\theta_1) \prod_{t=2}^{T} p(x_t | \theta_t) p(\theta_t | \theta_{t-1}),
 $$
 
-where \( x_{1:T} \) denotes a sequence of observed data \( (x_1, x_2, \dots, x_T) \) and \( \theta_{1:T} \) denotes a sequence of hidden states \( (\theta_1, \theta_2, \dots, \theta_T) \).
+where $\( x_{1:T} \)$ denotes a sequence of observed data $\( (x_1, x_2, \dots, x_T) \)$ and $\( \theta_{1:T} \)$ denotes a sequence of hidden states $\( (\theta_1, \theta_2, \dots, \theta_T) \)$.
 
-\( p(x_t | \theta_t) \) is the probability distribution for the observed data given the hidden state. In this study, we use a Gaussian distribution to specify this distribution.
+$\( p(x_t | \theta_t) \)$ is the probability distribution for the observed data given the hidden state. In this study, we use a Gaussian distribution to specify this distribution.
 
 $$
 p(x_t | \theta_t = k) = \mathcal{N}(m_k, C_k),
 $$
 
-where \( m_k \) and \( C_k \) are state means and covariances, and \( k \) indexes the state that is active, and \( p(\theta_t | \theta_{t-1}) \) is the temporal model for the hidden state.
+where $\( m_k \)$ and $\( C_k \)$ are state means and covariances, and $\( k \)$ indexes the state that is active, and $\( p(\theta_t | \theta_{t-1}) \)$ is the temporal model for the hidden state.
 
 ### Inferences
 
@@ -91,9 +91,7 @@ The Viterbi algorithm is a dynamic programming algorithm used to find the most l
 1. **Initialization**:
    - At time $\( t = 1 \)$, initialize the probability of each state based on the initial state distribution and the likelihood of observing the first data point given each state.
 
-   $$
-   \delta(1, j) = \pi_j \cdot p(x_1 | \theta_1 = j),
-   $$
+   $$\delta(1, j) = \pi_j \cdot p(x_1 | \theta_1 = j)$$
    
 Where
    - **$\( \delta(1, j) \)$**: The most probable path probability at time $\( t = 1 \)$ for reaching state $\( j \)$. It represents the highest probability of being in state $\( j \$) at time $\( t = 1 \)$.
