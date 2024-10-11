@@ -69,16 +69,16 @@ where \( m_k \) and \( C_k \) are state means and covariances, and \( k \) index
 
 Variational Bayesian (VB) approach is employed for inference in Hidden Markov Models (HMMs). VB approximate the posterior distribution of the model parameters analytically by iteratively updating parameter on batches. Here, the parameters include
 
-* The transition probability matrix, $$ \( p(\theta_t | \theta_{t-1}) \).$$ 
-* The hidden state at each time point, \( \theta_t \).
-* The observation model parameters: state means, \( m_k \), and covariances, \( C_k \)
+* The transition probability matrix
+* The hidden state at each time point
+* The observation model parameters: state means
 
 Simply, the way VB work is:
 
-* We randomly initialize approximate distributions for model parameters (known as an **approximate posterior distribution**). i.e. we propose the distribution \( q(\cdot) \) for the model parameters.
+* We randomly initialize approximate distributions for model parameters (known as an **approximate posterior distribution**).
 * We use the generative model to calculate a cost function (**variational free energy**), which captures the likelihood of our current model parameters generating the data we have observed.
-* We tweak the model parameters' distributions \( q(\cdot) \) to minimize the cost function.
-* We take the most likely value from \( q(\cdot) \) as our estimate for the model parameters (this is known as the **MAP estimate**).
+* We tweak the model parameters' distributions to minimize the cost function.
+* We take the most likely value from as our estimate for the model parameters (this is known as the **MAP estimate**).
 
 Over time, it will converge to the best model parameters for generating the observed data.
 
@@ -89,7 +89,7 @@ After fitting the Hidden Markov Model (HMM) using observed data, the **Viterbi p
 The Viterbi algorithm is a dynamic programming algorithm used to find the most likely sequence of hidden states given an observed sequence of data. It works by maximizing the joint probability of the state sequence and the observations. The key steps are:
 
 1. **Initialization**:
-   - At time \( t = 1 \), initialize the probability of each state based on the initial state distribution and the likelihood of observing the first data point given each state.
+   - At time $\( t = 1 \)$, initialize the probability of each state based on the initial state distribution and the likelihood of observing the first data point given each state.
 
    $$
    \delta(1, j) = \pi_j \cdot p(x_1 | \theta_1 = j)
