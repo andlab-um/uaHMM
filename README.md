@@ -33,6 +33,7 @@ Post-hoc analysis shows that the interval time (as measure of frequency in visit
 <br/>
 
 ## **Methodology**
+### Hidden Markov Model
 
 <div align=center>
     <img src="README_graph/hmm_process.gif" alt="hmm process" style="width: 500px;" />  
@@ -46,15 +47,84 @@ The model consists of two parts:
 
 * The Observed Data, in which the the generated data given the hidden states
 
+### Generative Model
+
+The Generative Model can be used to represent the observed data. It can be written down mathematically by specifying the joint distribution of observed and latent variables. The joint probability distribution for the HMM generating a sequence of data is:
+
 $$
 p(x_{1:T}, \theta_{1:T}) = p(x_1 | \theta_1) p(\theta_1) \prod_{t=2}^{T} p(x_t | \theta_t) p(\theta_t | \theta_{t-1}),
 $$
 
-   
+where \( x_{1:T} \) denotes a sequence of observed data \( (x_1, x_2, \dots, x_T) \) and \( \theta_{1:T} \) denotes a sequence of hidden states \( (\theta_1, \theta_2, \dots, \theta_T) \).
+
+\( p(x_t | \theta_t) \) is the probability distribution for the observed data given the hidden state. In this study, we use a Gaussian distribution to specify this distribution.
+
+$$
+p(x_t | \theta_t = k) = \mathcal{N}(m_k, C_k),
+$$
+
+where \( m_k \) and \( C_k \) are state means and covariances, and \( k \) indexes the state that is active, and \( p(\theta_t | \theta_{t-1}) \) is the temporal model for the hidden state.
+
+### Inferences
+
+Variational Bayesian (VB) approach is employed for inference in Hidden Markov Models (HMMs). VB approximate the posterior distribution of the model parameters analytically by iteratively updating parameter on batches. Here, the parameters include
+
+* The transition probability matrix, \( p(\theta_t | \theta_{t-1}) \).
+* The hidden state at each time point, \( \theta_t \).
+* The observation model parameters: state means, \( m_k \), and covariances, \( C_k \)
+
+Simply, the way VB work is:
+
+* We randomly initialize approximate distributions for model parameters (known as an **approximate posterior distribution**). i.e. we propose the distribution \( q(\cdot) \) for the model parameters.
+* We use the generative model to calculate a cost function (**variational free energy**), which captures the likelihood of our current model parameters generating the data we have observed.
+* We tweak the model parameters' distributions \( q(\cdot) \) to minimize the cost function.
+* We take the most likely value from \( q(\cdot) \) as our estimate for the model parameters (this is known as the **MAP estimate**).
+
+Over time, it will converge to the best model parameters for generating the observed data.
+
+### Viterbi Algorithm
+
+After fitting the Hidden Markov Model (HMM) using observed data, the **Viterbi path**—defined as the most likely sequence of hidden states—can be computed using the **Viterbi algorithm**. Unlike the state time courses, which represent probabilities of being in different states at each time point, the Viterbi path assigns each time point to one specific state.
+
+The Viterbi algorithm is a dynamic programming algorithm used to find the most likely sequence of hidden states given an observed sequence of data. It works by maximizing the joint probability of the state sequence and the observations. The key steps are:
+
+1. **Initialization**:
+   - At time \( t = 1 \), initialize the probability of each state based on the initial state distribution and the likelihood of observing the first data point given each state.
+
+   $$
+   \delta(1, j) = \pi_j \cdot p(x_1 | \theta_1 = j)
+   $$
+
+   - **\( \delta(1, j) \)**: The most probable path probability at time \( t = 1 \) for reaching state \( j \). It represents the highest probability of being in state \( j \) at time \( t = 1 \).
+   - **\( \pi_j \)**: The initial probability of being in state \( j \). This term reflects the prior probability that the model starts in state \( j \).
+   - **\( p(x_1 | \theta_1 = j) \)**: The likelihood of observing \( x_1 \) given that the hidden state at time \( t = 1 \) is \( j \). This measures how well state \( j \) explains the first observation.
+
+2. **Recursion**:
+   - For each subsequent time step \( t = 2, 3, \dots, T \), compute the most likely path to each state by considering all possible paths leading to that state. This step uses the previous state probabilities and the transition probabilities between states.
+
+   $$
+   \delta(t, j) = \max_i \left[ \delta(t-1, i) \cdot p(\theta_t = j | \theta_{t-1} = i) \right] \cdot p(x_t | \theta_t = j)
+   $$
+
+   - **\( \delta(t, j) \)**: The most probable path probability at time \( t \) for reaching state \( j \), given the observations up to time \( t \). This term finds the maximum probability of being in state \( j \) at time \( t \) by considering all the possible states at the previous time step.
+   - **\( \max_i \left[ \delta(t-1, i) \cdot p(\theta_t = j | \theta_{t-1} = i) \right] \)**: This finds the maximum probability path to state \( j \) at time \( t \), considering all states \( i \) at the previous time step. \( p(\theta_t = j | \theta_{t-1} = i) \) is the transition probability from state \( i \) to state \( j \).
+   - **\( p(x_t | \theta_t = j) \)**: The likelihood of observing \( x_t \) given that the hidden state at time \( t \) is \( j \). It measures how well state \( j \) explains the observation at time \( t \).
+
+3. **Termination**:
+   - At the final time step \( T \), determine the state with the highest probability, which corresponds to the end of the most likely sequence of states.
+
+   $$
+   s_T^* = \arg\max_j \delta(T, j)
+   $$
+
+   - **\( s_T^* \)**: The most likely state at the final time step \( T \). This identifies which state maximizes the probability of the entire path.
+
+4. **Backtracking**:
+   - Once the final state is identified, trace back through the stored paths to recover the most likely sequence of states, working backward from \( t = T \) to \( t = 1 \).
+
 ___
 ## **Code**
 
-___
 
 **This repository contains:**
 ```
@@ -128,5 +198,3 @@ ___
 ___
 
 For bug reports, please contact Eric Wang ([eric.wang2004nz@link.cuhk.edu.hk](mailto:eric.wang2004nz@link.cuhk.edu.hk), or through X [@ericwan53761434](https://x.com/ericwan53761434).
-
-
