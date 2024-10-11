@@ -14,21 +14,21 @@ ___
 ## **Introduction**
 This repository includes code to replicate the analysis and produce figures in the paper. In short, our analysis includes 3 parts.
 
-* Resting State fMRI (rs-fMRI) Hidden Markov Modelling (HMM) (see **Methodology** for more detail)
+* Resting-State fMRI (rs-fMRI) Hidden Markov Modelling (HMM) (see **Methodology** for more detail)
 * rs-fMRI HMM and Behaviroal data
 * rs-fMRI HMM and Task fMRI
 
-As shown in the picture above, the HMM results in 10 discrete states. To quantify the functinoal relevance of these inferred states, we used Neurosynth decoding model to map the spatial expression of each state onto Neurosynth topics.
+As shown in the picture above, the HMM results in 10 discrete states. To quantify the functional relevance of these inferred states, we used Neurosynth decoding model to map the spatial expression of each state onto Neurosynth topics.
 
 <div align=center>
-    <img src="README_graph/Summary_2.JPG" alt="Neurosynth result" style="width: 1000px;" />  
+    <img src="README_graph/Summary_2.JPG" alt="Neurosynth result" style="width: 500px;" />  
 </div>
 <br/>
 
-Post-hoc analysis shows that the interval time (as measure of frequency in visiting the state) of state 10, the state transition rate, and model entropy are significantly related to several behavioral data, and one of these results is shown below (refer to the paper for details)
+Post-hoc analysis shows that the interval time (as a measure of frequency in visiting the state) of state 10, the state transition rate, and model entropy are significantly related to several behavioral data, and one of these results is shown below (refer to the paper for details)
 
 <div align=center>
-    <img src="README_graph/Summary_1.JPG" alt="Behavioral HMM summary" style="width: 1000px;" />  
+    <img src="README_graph/Summary_1.JPG" alt="Behavioral HMM summary" style="width: 500px;" />  
 </div>
 <br/>
 
@@ -36,16 +36,16 @@ Post-hoc analysis shows that the interval time (as measure of frequency in visit
 ### Hidden Markov Model
 
 <div align=center>
-    <img src="README_graph/hmm_process.gif" alt="hmm process" style="width: 500px;" />  
+    <img src="README_graph/hmm_process.gif" alt="hmm process" style="width: 800px;" />  
 </div>
 <br/>
 
-HMM is a popuar model developed by [Diego Vidaurre](https://scholar.google.co.uk/citations?user=krbBtukAAAAJ&hl=en). This model has been used to study the dynamic nature of serval neuromaging modality.
+HMM is a popular model developed by [Diego Vidaurre](https://scholar.google.co.uk/citations?user=krbBtukAAAAJ&hl=en). This model has been used to study the dynamic nature of serval neuroimaging modalities.
 
 The model consists of two parts:
-* The Hidden States, in which *k* number of latent variable exists in the hidden spaces.
+* The Hidden States, in which *k* number of latent variables exists in the hidden spaces.
 
-* The Observed Data, in which the the generated data given the hidden states
+* The Observed Data, in which the generated data given the hidden states
 
 ### Generative Model
 
@@ -69,16 +69,16 @@ where \( m_k \) and \( C_k \) are state means and covariances, and \( k \) index
 
 Variational Bayesian (VB) approach is employed for inference in Hidden Markov Models (HMMs). VB approximate the posterior distribution of the model parameters analytically by iteratively updating parameter on batches. Here, the parameters include
 
-* The transition probability matrix
-* The hidden state at each time point
-* The observation model parameters: state means
+The transition probability matrix, \( p(\theta_t | \theta_{t-1}) \).
+The hidden state at each time point, \( \theta_t \).
+The observation model parameters: state means, \( m_k \), and covariances, \( C_k \)
 
-Simply, the way VB work is:
+Simply, the way VB works is:
 
-* We randomly initialize approximate distributions for model parameters (known as an **approximate posterior distribution**).
+* We randomly initialize approximate distributions for model parameters (known as an **approximate posterior distribution**). i.e. we propose the distribution \( q(\cdot) \) for the model parameters.
 * We use the generative model to calculate a cost function (**variational free energy**), which captures the likelihood of our current model parameters generating the data we have observed.
-* We tweak the model parameters' distributions to minimize the cost function.
-* We take the most likely value from as our estimate for the model parameters (this is known as the **MAP estimate**).
+* We tweak the model parameters' distributions \( q(\cdot) \) to minimize the cost function.
+* We take the most likely value from \( q(\cdot) \) as our estimate for the model parameters (this is known as the **MAP estimate**).
 
 Over time, it will converge to the best model parameters for generating the observed data.
 
@@ -89,37 +89,38 @@ After fitting the Hidden Markov Model (HMM) using observed data, the **Viterbi p
 The Viterbi algorithm is a dynamic programming algorithm used to find the most likely sequence of hidden states given an observed sequence of data. It works by maximizing the joint probability of the state sequence and the observations. The key steps are:
 
 1. **Initialization**:
-   - At time $\( t = 1 \)$, initialize the probability of each state based on the initial state distribution and the likelihood of observing the first data point given each state.
+   - At time \( t = 1 \), initialize the probability of each state based on the initial state distribution and the likelihood of observing the first data point given each state.
 
    $$
    \delta(1, j) = \pi_j \cdot p(x_1 | \theta_1 = j)
    $$
-
+   
+Where
    - **\( \delta(1, j) \)**: The most probable path probability at time \( t = 1 \) for reaching state \( j \). It represents the highest probability of being in state \( j \) at time \( t = 1 \).
    - **\( \pi_j \)**: The initial probability of being in state \( j \). This term reflects the prior probability that the model starts in state \( j \).
    - **\( p(x_1 | \theta_1 = j) \)**: The likelihood of observing \( x_1 \) given that the hidden state at time \( t = 1 \) is \( j \). This measures how well state \( j \) explains the first observation.
 
-2. **Recursion**:
+3. **Recursion**:
    - For each subsequent time step \( t = 2, 3, \dots, T \), compute the most likely path to each state by considering all possible paths leading to that state. This step uses the previous state probabilities and the transition probabilities between states.
 
    $$
    \delta(t, j) = \max_i \left[ \delta(t-1, i) \cdot p(\theta_t = j | \theta_{t-1} = i) \right] \cdot p(x_t | \theta_t = j)
    $$
-
+Where
    - **\( \delta(t, j) \)**: The most probable path probability at time \( t \) for reaching state \( j \), given the observations up to time \( t \). This term finds the maximum probability of being in state \( j \) at time \( t \) by considering all the possible states at the previous time step.
    - **\( \max_i \left[ \delta(t-1, i) \cdot p(\theta_t = j | \theta_{t-1} = i) \right] \)**: This finds the maximum probability path to state \( j \) at time \( t \), considering all states \( i \) at the previous time step. \( p(\theta_t = j | \theta_{t-1} = i) \) is the transition probability from state \( i \) to state \( j \).
    - **\( p(x_t | \theta_t = j) \)**: The likelihood of observing \( x_t \) given that the hidden state at time \( t \) is \( j \). It measures how well state \( j \) explains the observation at time \( t \).
 
-3. **Termination**:
+4. **Termination**:
    - At the final time step \( T \), determine the state with the highest probability, which corresponds to the end of the most likely sequence of states.
 
    $$
    s_T^* = \arg\max_j \delta(T, j)
    $$
-
+Where
    - **\( s_T^* \)**: The most likely state at the final time step \( T \). This identifies which state maximizes the probability of the entire path.
 
-4. **Backtracking**:
+5. **Backtracking**:
    - Once the final state is identified, trace back through the stored paths to recover the most likely sequence of states, working backward from \( t = T \) to \( t = 1 \).
 
 ___
