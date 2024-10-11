@@ -16,9 +16,10 @@ ___
 ## **Methodology**
 
 <div style="text-align: center;">
-    <img src="README_graph/hmm_process.gif" alt="hmm process"/>
+    <img src="README_graph/hmm_process.gif" alt="hmm process" style="width: 500px;" />  
 </div>
-<br/>   
+<br/>
+   
 ___
 ## **Code**
 
