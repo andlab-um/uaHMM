@@ -16,7 +16,7 @@ ___
 ## **Methodology**
 
 <p align="center">
-    <img src="HMM.png" alt="HMM" width="400"/> <br/>
+    <img src="HMM.png" alt="HMM" width="500"/> <br/>
 </p>
 
 ___
