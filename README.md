@@ -4,7 +4,7 @@ Code and data for **The alternated brain states**, accompanying the preprint:
 
 **E.,Wang, XJ, Xu, R., J. H, Wu (2024). The alternated brain states in resting state after moral decisions.** *bioRxiv* <br/>
 
-<img src="HMM_state.gif" alt="dynamics" style="zoom:100%;" />
+<img src="HMM_state.gif" alt="dynamics" style="zoom:100%;" /><br/>
 ___
 ## **Abstract**
 Instances of dishonesty may induce feelings of anxiety or guilt, leading to evident "after-effects" that impact subsequent behaviour and neural activity. However, how constantly switching moral decisions affects the brain states and what behavioural variable is primarily responsible
