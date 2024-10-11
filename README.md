@@ -70,12 +70,12 @@ where \( m_k \) and \( C_k \) are state means and covariances, and \( k \) index
 Variational Bayesian (VB) approach is employed for inference in Hidden Markov Models (HMMs). VB approximate the posterior distribution of the model parameters analytically by iteratively updating parameter on batches. Here, the parameters include
 
 * The transition probability matrix, $( p(\theta_t | \theta_{t-1}) \)$.
-* The hidden state at each time point, \( \theta_t \).
-* The observation model parameters: state means, \( m_k \), and covariances, \( C_k \)
+* The hidden state at each time point, $\( \theta_t \)$.
+* The observation model parameters: state means, $\( m_k \)$, and covariances, $\( C_k \)$
 
 Simply, the way VB works is:
 
-* We randomly initialize approximate distributions for model parameters (known as an **approximate posterior distribution**). i.e. we propose the distribution \( q(\cdot) \) for the model parameters.
+* We randomly initialize approximate distributions for model parameters (known as an **approximate posterior distribution**). i.e. we propose the distribution $( q(\cdot) $) for the model parameters.
 * We use the generative model to calculate a cost function (**variational free energy**), which captures the likelihood of our current model parameters generating the data we have observed.
 * We tweak the model parameters' distributions \( q(\cdot) \) to minimize the cost function.
 * We take the most likely value from \( q(\cdot) \) as our estimate for the model parameters (this is known as the **MAP estimate**).
