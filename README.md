@@ -91,7 +91,7 @@ The Viterbi algorithm is a dynamic programming algorithm used to find the most l
 1. **Initialization**:
    - At time $\( t = 1 \)$, initialize the probability of each state based on the initial state distribution and the likelihood of observing the first data point given each state.
 
-   $$\delta(1, j) = \pi_j \cdot p(x_1 | \theta_1 = j)$$
+   $$\delta(1, j) = \pi_j \cdot p(x_1 | \theta_1 = j),$$
    
 Where
    - **$\( \delta(1, j) \)$**: The most probable path probability at time $\( t = 1 \)$ for reaching state $\( j \)$. It represents the highest probability of being in state $\( j \$) at time $\( t = 1 \)$.
@@ -101,9 +101,8 @@ Where
 3. **Recursion**:
    - For each subsequent time step $\( t = 2, 3, \dots, T \)$, compute the most likely path to each state by considering all possible paths leading to that state. This step uses the previous state probabilities and the transition probabilities between states.
 
-   $
-   \delta(t, j) = \max_i \left[ \delta(t-1, i) \cdot p(\theta_t = j | \theta_{t-1} = i) \right] \cdot p(x_t | \theta_t = j)
-   $
+   $$\delta(t, j) = \max_i \left[ \delta(t-1, i) \cdot p(\theta_t = j | \theta_{t-1} = i) \right] \cdot p(x_t | \theta_t = j),$$
+
 Where
    - **$\( \delta(t, j) \)$**: The most probable path probability at time $\( t \)$ for reaching state $\( j \)$, given the observations up to time $\( t \)$. This term finds the maximum probability of being in state $\( j \$) at time $\( t \)$ by considering all the possible states at the previous time step.
    - **$\( \max_i \left[ \delta(t-1, i) \cdot p(\theta_t = j | \theta_{t-1} = i) \right] \)$**: This finds the maximum probability path to state $\( j \)$ at time $\( t \)$, considering all states $\( i \)$ at the previous time step. $\( p(\theta_t = j | \theta_{t-1} = i) \)$ is the transition probability from state $\( i \$) to state $\( j \)$.
@@ -112,13 +111,12 @@ Where
 4. **Termination**:
    - At the final time step \( T \), determine the state with the highest probability, which corresponds to the end of the most likely sequence of states.
 
-   $
-   s_T^* = \arg\max_j \delta(T, j)
-   $
+   $$ s_T^* = \arg\max_j \delta(T, j),$$
+
 Where
    - **$( s_T^* )$**: The most likely state at the final time step $\( T \)$. This identifies which state maximizes the probability of the entire path.
 
-5. **Backtracking**:
+6. **Backtracking**:
    - Once the final state is identified, trace back through the stored paths to recover the most likely sequence of states, working backward from $\( t = T \$) to $\( t = 1 \)$.
 
 ___
