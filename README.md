@@ -36,7 +36,7 @@ Post-hoc analysis shows that the interval time (as a measure of frequency in vis
 ### Hidden Markov Model
 
 <div align=center>
-    <img src="README_graph/hmm_process.gif" alt="hmm process" style="width: 800px;" />  
+    <img src="README_graph/hmm_process.gif" alt="hmm process" style="width: 600px;" />  
 </div>
 <br/>
 
