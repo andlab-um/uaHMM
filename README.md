@@ -21,7 +21,7 @@ This repository includes code to replicate the analysis and produce figures in t
 As shown in the picture above, the HMM results in 10 discrete states. To quantify the functional relevance of these inferred states, we used Neurosynth decoding model to map the spatial expression of each state onto Neurosynth topics.
 
 <div align=center>
-    <img src="README_graph/Summary_2.JPG" alt="Neurosynth result" style="width: 500px;" />  
+    <img src="README_graph/Summary_2.JPG" alt="Neurosynth result" style="width: 1000px;" />  
 </div>
 <br/>
 
