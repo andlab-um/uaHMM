@@ -91,9 +91,9 @@ The Viterbi algorithm is a dynamic programming algorithm used to find the most l
 1. **Initialization**:
    - At time $\( t = 1 \)$, initialize the probability of each state based on the initial state distribution and the likelihood of observing the first data point given each state.
 
-   $
-   \delta(1, j) = \pi_j \cdot p(x_1 | \theta_1 = j)
-   $
+   $$
+   \delta(1, j) = \pi_j \cdot p(x_1 | \theta_1 = j),
+   $$
    
 Where
    - **$\( \delta(1, j) \)$**: The most probable path probability at time $\( t = 1 \)$ for reaching state $\( j \)$. It represents the highest probability of being in state $\( j \$) at time $\( t = 1 \)$.
