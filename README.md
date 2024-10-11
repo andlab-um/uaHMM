@@ -15,8 +15,9 @@ ___
 
 ___
 ## **Methodology**
-<img src="HMM.png" alt="HMM" style="zoom:100%;" /><br/>
-
+<p align="center">
+    <img src="HMM.png" alt="HMM" style="zoom:100%;" />
+</p>
 ___
 ## **Code**
 
