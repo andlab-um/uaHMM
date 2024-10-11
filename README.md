@@ -16,7 +16,10 @@ ___
 ## **Methodology**
 
 <p align="center">
-    <img src="HMM.png" alt="HMM" width="500"/> <br/>
+    <video width="500" controls>
+        <source src="hmm_process.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
 </p>
 
 ___
