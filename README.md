@@ -12,6 +12,25 @@ for the changing effect is still unclear. This study aimed to investigate how mo
 
 ___
 ## **Introduction**
+This repository includes code to replicate the analysis and produce figures in the paper. In short, our analysis includes 3 parts.
+
+* Resting State fMRI (rs-fMRI) Hidden Markov Modelling (HMM) (see **Methodology** for more detail)
+* rs-fMRI HMM and Behaviroal data
+* rs-fMRI HMM and Task fMRI
+
+As shown in the picture above, the HMM results in 10 discrete states. To quantify the functinoal relevance of these inferred states, we used Neurosynth decoding model to map the spatial expression of each state onto Neurosynth topics.
+
+<div align=center>
+    <img src="README_graph/Summary_2.JPG" alt="Neurosynth result" style="width: 500px;" />  
+</div>
+<br/>
+
+Post-hoc analysis shows that the interval time (as measure of frequency in visiting the state) of state 10, the state transition rate, and model entropy are significantly related to several behavioral data, and one of these results is shown below (refer to the paper for details)
+
+<div align=center>
+    <img src="README_graph/Summary_1.JPG" alt="Behavioral HMM summary" style="width: 500px;" />  
+</div>
+<br/>
 
 ## **Methodology**
 
@@ -19,6 +38,18 @@ ___
     <img src="README_graph/hmm_process.gif" alt="hmm process" style="width: 500px;" />  
 </div>
 <br/>
+
+HMM is a popuar model developed by [Diego Vidaurre](https://scholar.google.co.uk/citations?user=krbBtukAAAAJ&hl=en). This model has been used to study the dynamic nature of serval neuromaging modality.
+
+The model consists of two parts:
+* The Hidden States, in which *k* number of latent variable exists in the hidden spaces.
+
+* The Observed Data, in which the the generated data given the hidden states
+
+$$
+p(x_{1:T}, \theta_{1:T}) = p(x_1 | \theta_1) p(\theta_1) \prod_{t=2}^{T} p(x_t | \theta_t) p(\theta_t | \theta_{t-1}),
+$$
+
    
 ___
 ## **Code**
@@ -80,6 +111,7 @@ root
  │    ├── HMM_analysis_All_in_one.m # Main analysis code
  │
  ├── NBSDirected1.0.1 # External Matlab package for dNBS
+ ├── README_graph # Graph included in the README file
 
 ```
 
