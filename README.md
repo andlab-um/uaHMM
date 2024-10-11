@@ -15,7 +15,7 @@ ___
 
 ## **Methodology**
 
-<div style="text-align: center;">
+<div style="display: flex; justify-content: center;">
     <img src="README_graph/hmm_process.gif" alt="hmm process" style="width: 500px;" />  
 </div>
 <br/>
