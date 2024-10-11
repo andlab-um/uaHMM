@@ -77,8 +77,8 @@ Simply, the way VB works is:
 
 * We randomly initialize approximate distributions for model parameters (known as an **approximate posterior distribution**). i.e. we propose the distribution $( q(\cdot) $) for the model parameters.
 * We use the generative model to calculate a cost function (**variational free energy**), which captures the likelihood of our current model parameters generating the data we have observed.
-* We tweak the model parameters' distributions \( q(\cdot) \) to minimize the cost function.
-* We take the most likely value from \( q(\cdot) \) as our estimate for the model parameters (this is known as the **MAP estimate**).
+* We tweak the model parameters' distributions $( q(\cdot) \$) to minimize the cost function.
+* We take the most likely value from $( q(\cdot) \$) as our estimate for the model parameters (this is known as the **MAP estimate**).
 
 Over time, it will converge to the best model parameters for generating the observed data.
 
@@ -89,39 +89,39 @@ After fitting the Hidden Markov Model (HMM) using observed data, the **Viterbi p
 The Viterbi algorithm is a dynamic programming algorithm used to find the most likely sequence of hidden states given an observed sequence of data. It works by maximizing the joint probability of the state sequence and the observations. The key steps are:
 
 1. **Initialization**:
-   - At time \( t = 1 \), initialize the probability of each state based on the initial state distribution and the likelihood of observing the first data point given each state.
+   - At time $\( t = 1 \)$, initialize the probability of each state based on the initial state distribution and the likelihood of observing the first data point given each state.
 
-   $$
+   $
    \delta(1, j) = \pi_j \cdot p(x_1 | \theta_1 = j)
-   $$
+   $
    
 Where
-   - **\( \delta(1, j) \)**: The most probable path probability at time \( t = 1 \) for reaching state \( j \). It represents the highest probability of being in state \( j \) at time \( t = 1 \).
-   - **\( \pi_j \)**: The initial probability of being in state \( j \). This term reflects the prior probability that the model starts in state \( j \).
-   - **\( p(x_1 | \theta_1 = j) \)**: The likelihood of observing \( x_1 \) given that the hidden state at time \( t = 1 \) is \( j \). This measures how well state \( j \) explains the first observation.
+   - **$\( \delta(1, j) \)$**: The most probable path probability at time $\( t = 1 \)$ for reaching state $\( j \)$. It represents the highest probability of being in state $\( j \$) at time $\( t = 1 \)$.
+   - **$\( \pi_j \)$**: The initial probability of being in state \( j \). This term reflects the prior probability that the model starts in state $\( j \)$.
+   - **$\( p(x_1 | \theta_1 = j) \)$**: The likelihood of observing $\( x_1 \)$ given that the hidden state at time $\( t = 1 \)$ is $\( j \)$. This measures how well state $\( j \)$ explains the first observation.
 
 3. **Recursion**:
-   - For each subsequent time step \( t = 2, 3, \dots, T \), compute the most likely path to each state by considering all possible paths leading to that state. This step uses the previous state probabilities and the transition probabilities between states.
+   - For each subsequent time step $\( t = 2, 3, \dots, T \)$, compute the most likely path to each state by considering all possible paths leading to that state. This step uses the previous state probabilities and the transition probabilities between states.
 
-   $$
+   $
    \delta(t, j) = \max_i \left[ \delta(t-1, i) \cdot p(\theta_t = j | \theta_{t-1} = i) \right] \cdot p(x_t | \theta_t = j)
-   $$
+   $
 Where
-   - **\( \delta(t, j) \)**: The most probable path probability at time \( t \) for reaching state \( j \), given the observations up to time \( t \). This term finds the maximum probability of being in state \( j \) at time \( t \) by considering all the possible states at the previous time step.
-   - **\( \max_i \left[ \delta(t-1, i) \cdot p(\theta_t = j | \theta_{t-1} = i) \right] \)**: This finds the maximum probability path to state \( j \) at time \( t \), considering all states \( i \) at the previous time step. \( p(\theta_t = j | \theta_{t-1} = i) \) is the transition probability from state \( i \) to state \( j \).
-   - **\( p(x_t | \theta_t = j) \)**: The likelihood of observing \( x_t \) given that the hidden state at time \( t \) is \( j \). It measures how well state \( j \) explains the observation at time \( t \).
+   - **$\( \delta(t, j) \)$**: The most probable path probability at time $\( t \)$ for reaching state $\( j \)$, given the observations up to time $\( t \)$. This term finds the maximum probability of being in state $\( j \$) at time $\( t \)$ by considering all the possible states at the previous time step.
+   - **$\( \max_i \left[ \delta(t-1, i) \cdot p(\theta_t = j | \theta_{t-1} = i) \right] \)$**: This finds the maximum probability path to state $\( j \)$ at time $\( t \)$, considering all states $\( i \)$ at the previous time step. $\( p(\theta_t = j | \theta_{t-1} = i) \)$ is the transition probability from state $\( i \$) to state $\( j \)$.
+   - **$\( p(x_t | \theta_t = j) \)$**: The likelihood of observing $\( x_t \)$ given that the hidden state at time $\( t \)$ is $\( j \)$. It measures how well state $\( j \)$ explains the observation at time $\( t \)$.
 
 4. **Termination**:
    - At the final time step \( T \), determine the state with the highest probability, which corresponds to the end of the most likely sequence of states.
 
-   $$
+   $
    s_T^* = \arg\max_j \delta(T, j)
-   $$
+   $
 Where
-   - **\( s_T^* \)**: The most likely state at the final time step \( T \). This identifies which state maximizes the probability of the entire path.
+   - **$( s_T^* )$**: The most likely state at the final time step $\( T \)$. This identifies which state maximizes the probability of the entire path.
 
 5. **Backtracking**:
-   - Once the final state is identified, trace back through the stored paths to recover the most likely sequence of states, working backward from \( t = T \) to \( t = 1 \).
+   - Once the final state is identified, trace back through the stored paths to recover the most likely sequence of states, working backward from $\( t = T \$) to $\( t = 1 \)$.
 
 ___
 ## **Code**
