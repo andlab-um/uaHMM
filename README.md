@@ -28,7 +28,7 @@ As shown in the picture above, the HMM results in 10 discrete states. To quantif
 Post-hoc analysis shows that the interval time (as a measure of frequency in visiting the state) of state 10, the state transition rate, and model entropy are significantly related to several behavioral data, and one of these results is shown below (refer to the paper for details)
 
 <div align=center>
-    <img src="README_graph/Summary_1.JPG" alt="Behavioral HMM summary" style="width: 500px;" />  
+    <img src="README_graph/Summary_1.JPG" alt="Behavioral HMM summary" style="width: 1000px;" />  
 </div>
 <br/>
 
@@ -36,7 +36,7 @@ Post-hoc analysis shows that the interval time (as a measure of frequency in vis
 ### Hidden Markov Model
 
 <div align=center>
-    <img src="README_graph/hmm_process.gif" alt="hmm process" style="width: 800px;" />  
+    <img src="README_graph/hmm_process.gif" alt="hmm process" style="width: 1000px;" />  
 </div>
 <br/>
 
@@ -91,7 +91,7 @@ The Viterbi algorithm is a dynamic programming algorithm used to find the most l
 1. **Initialization**:
    - At time $\( t = 1 \)$, initialize the probability of each state based on the initial state distribution and the likelihood of observing the first data point given each state.
 
-   $$\delta(1, j) = \pi_j \cdot p(x_1 | \theta_1 = j),$$
+   $$ delta(1, j) = \pi_j \cdot p(x_1 | \theta_1 = j),$$
    
 Where
    - **$\( \delta(1, j) \)$**: The most probable path probability at time $\( t = 1 \)$ for reaching state $\( j \)$. It represents the highest probability of being in state $\( j \$) at time $\( t = 1 \)$.
@@ -114,7 +114,7 @@ Where
    $$ s_T^* = \arg\max_j \delta(T, j),$$
 
 Where
-   - **$( s_T^* )$**: The most likely state at the final time step $\( T \)$. This identifies which state maximizes the probability of the entire path.
+   - $**( s_T^* )**$: The most likely state at the final time step $\( T \)$. This identifies which state maximizes the probability of the entire path.
 
 6. **Backtracking**:
    - Once the final state is identified, trace back through the stored paths to recover the most likely sequence of states, working backward from $\( t = T \$) to $\( t = 1 \)$.
