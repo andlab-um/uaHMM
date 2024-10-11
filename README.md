@@ -15,10 +15,7 @@ ___
 
 ## **Methodology**
 
-<div style="display: flex; justify-content: center;">
-    <img src="README_graph/hmm_process.gif" alt="hmm process" style="width: 45%; margin-right: 10px;"/>
-    <img src="README_graph/State_scale.png" alt="hmm process" style="width: 5%; margin-left: 10px;"/> <br/>
-</div>
+<img src="README_graph/hmm_process.gif" alt="hmm process", align = "center", /> <br/>
 ___
 ## **Code**
 
