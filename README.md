@@ -2,45 +2,32 @@
 
 Code and data for **The alternated brain states**, accompanying the preprint: 
 
-**E.,Wang, XJ, Xu, R., J. H, Wu (2024). The alternated brain states in resting state after moral decisions.** *bioRxiv* <br/>
+**E.,Wang, XJ, Xu, R., J. H, Wu (2025). The alternated brain states in resting state after moral decisions.** *bioRxiv* <br/>
 
 <img src="README_graph/HMM_state.gif" alt="dynamics" /><br/>
 ___
 ## **Abstract**
-Instances of dishonesty may induce feelings of anxiety or guilt, leading to evident "after-effects" that impact subsequent behaviour and neural activity. However, how constantly switching moral decisions affects the brain states and what behavioural variable is primarily responsible
-for the changing effect is still unclear. This study aimed to investigate how moral decisions influence resting brain states using rs-fMRI data collected before and after an information-passing task involving dishonest choices with rewards. We used multimodal fMRI (task-fMRI and rs-fMRI) and behavioural data and utilized an advanced computational model called the Hidden Markov Model (HMM) to explore brain dynamics during this process.
+Instances of dishonesty may induce feelings of anxiety or guilt, leading to evident "after-effects" that impact subsequent behaviour and neural activity. However, which functional networks are particularly involved in the reconfiguration of brain states relating to moral decision-making, and to what extent do these network reconfigurations capture the neural and behavioral correlates of motivated dishonesty are still unclear. This study aimed to investigate how moral decisions influence resting brain states using both rs-fMRI and task-fMRI data collected before, during and after an information-passing task involving dishonest choices with rewards. We utilized an advanced computational model called the Hidden Markov Model (HMM) to explore brain dynamics as the task unfold.
 
 ___
 ## **Introduction**
 This repository includes code to replicate the analysis and produce figures in the paper. In short, our analysis includes 3 parts.
 
-* Resting-State fMRI (rs-fMRI) Hidden Markov Modelling (HMM) (see **Methodology** for more detail)
-* rs-fMRI HMM and Behaviroal data
-* rs-fMRI HMM and Task fMRI
+* Step 1: Hidden Markov Modelling (HMM) (see **Methodology** for more detail)
+* Step 2: HMM dynamics
+* Step 3: HMM and behavior (Motivated dishonesty & DDM parameter)
 
-As shown in the picture above, the HMM results in 10 discrete states. To quantify the functional relevance of these inferred states, we used Neurosynth decoding model to map the spatial expression of each state onto Neurosynth topics.
-
-<div align=center>
-    <img src="README_graph/Summary_2.JPG" alt="Neurosynth result" style="width: 800px;" />  
-</div>
-<br/>
-
-Post-hoc analysis shows that the interval time (as a measure of frequency in visiting the state) of state 10, the state transition rate, and model entropy are significantly related to several behavioral data, and one of these results is shown below (refer to the paper for details)
-
-<div align=center>
-    <img src="README_graph/Summary_1.JPG" alt="Behavioral HMM summary" style="width: 1000px;" />  
-</div>
-<br/>
+The HMM results in 4 discrete brain states. To quantify the functional relevance of these inferred states, we used Neurosynth decoding model to map the spatial expression of each state onto Neurosynth topics. 
 
 ## **Methodology**
 ### Hidden Markov Model
 
 <div align=center>
-    <img src="README_graph/hmm_process.gif" alt="hmm process" style="width: 600px;" />  
+    <img src="README_graph/hmm_process.JPG" alt="hmm process" style="width: 1000px;" />  
 </div>
 <br/>
 
-HMM is a popular model developed by [Diego Vidaurre](https://scholar.google.co.uk/citations?user=krbBtukAAAAJ&hl=en). This model has been used to study the dynamic nature of serval neuroimaging modalities.
+HMM used in this study is developed by [Diego Vidaurre](https://scholar.google.co.uk/citations?user=krbBtukAAAAJ&hl=en). This model has been used to study the dynamic nature of serval neuroimaging modalities.
 
 The model consists of two parts:
 * The Hidden States, in which *k* number of latent variables exists in the hidden spaces.
@@ -49,7 +36,7 @@ The model consists of two parts:
 
 ### Generative Model
 
-The Generative Model can be used to represent the observed data. It can be written down mathematically by specifying the joint distribution of observed and latent variables. The joint probability distribution for the HMM generating a sequence of data is:
+The Generative Model can be used to represent the underlying generative process from latent states to observed data. It can be written down mathematically by specifying the joint distribution of observed and latent variables. The joint probability distribution for the HMM generating a sequence of data is:
 
 $$
 p(x_{1:T}, \theta_{1:T}) = p(x_1 | \theta_1) p(\theta_1) \prod_{t=2}^{T} p(x_t | \theta_t) p(\theta_t | \theta_{t-1}),
@@ -82,82 +69,61 @@ Simply, the way VB works is:
 
 Over time, it will converge to the best model parameters for generating the observed data.
 
+However, HMM normally face significiant challenges to estimate potentially billions of parameters from limited data. For more detail, please see disucssion by [Ahrends et al., 2022](https://pubmed.ncbi.nlm.nih.gov/35217207/). Therefore, a common practice is to conduct HMM inference in PCA space to reduce the dimensionality. 
+
 ### Viterbi Algorithm
 
-After fitting the Hidden Markov Model (HMM) using observed data, the **Viterbi path**—defined as the most likely sequence of hidden states—can be computed using the **Viterbi algorithm**. The Viterbi algorithm is a dynamic programming algorithm used to find the most likely sequence of hidden states given an observed sequence of data. Simply put, it maximizes the likelihood of a sequence of hidden states that could have produced the observed data, assigning each time point to one specific state based on the overall highest probability.
+After fitting the Hidden Markov Model (HMM) using observed data, the **Viterbi path**—defined as the most likely sequence of hidden states—can be computed using the **Viterbi algorithm**. The Viterbi algorithm is a dynamic programming algorithm used to find the most likely sequence of hidden states given an observed sequence of data. Simply put, it maximizes the likelihood of a sequence of hidden states that could have produced the observed data, assigning each time point to one specific state based on the overall highest probability. From here, we can use the state-timecourse to compute 4 dynamic metrics (sometimes referred to as "chronnectome"), that is, fractional occupancies (the proportion of time each participant spent in each brain state), dwell time (the average duration in one visits to a certain state),  interval times (the average duration between visits to the same state) and switching rate (frequency with which participants transitioned between all brain states).
 ___
 ## **Code**
 
 
 **This repository contains:**
 ```
-root
- ├── ua_code # Main analysis code
- │    ├── HMM-MAR-master # External Matlab package for HMM
- │    ├── figures # directory containing all output figures from HMM analysis code
- │    ├── input_data # input data, contains fmri and behavioral data
- │    │   ├── Task # Contain task fmri data
- │    │   │    ├── subj_data # all subjects' data in task
- │    │   │    ├── activation_data.xlsx # all subjects' data summary
- │    │   │    ├── task.ipynb # for extracting the summary
- │    │   │
- │    │   ├── Behavioral_data.mat # Contain task behavioral data
- │    │   ├── MNI152lin_T1_2mm_brain.nii.gz # standard MNI mask
- │    │   ├── Tian_Subcortex_S1_3T_2009cAsym.nii.gz # Tian network
- │    │   ├── Yeo2011_17Networks_MNI152_FreeSurferConformed1mm.nii.gz # Yeo network
- │    │   
- │    │
- │    ├── neurosynth # neurosynth folder
- │    │   ├── neurosynth.ipynb # Main neurosynth code
- │    │   ├── State_activation # input for neurosynth
- │    │   ├── neurosynth_output # Contain neurosynth summary on all keywords
- │    │
- │    ├── output_HMM # directory containing folder related to HMM output, like state activation, transition probability and so on
- │    │   ├── Brain_states # contains 10 states of activation
- │    │   │   ├── output_states_tian # tian network activation 
- │    │   │   ├── output_states_yeo # yeo network activation 
- │    │   │   ├── covars.mat # HMM 10 states covariance
- │    │   │   ├── Mean_states.mat # 10 state activation on tian+yeo network
- │    │   │   
- │    │   ├── C-H_scores # contain K = 2 to 10 cross-validated C-H score
- │    │   │   ├── K2
- │    │   │   ├── K3
- │    │   │   ├── K4
- │    │   │   ├── K5
- │    │   │   ├── K6
- │    │   │   ├── K7
- │    │   │   ├── K8
- │    │   │   ├── K9
- │    │   │   ├── K10
- │    │   │   
- │    │   │
- │    │   ├── HMM_Model_K10 # contain HMM model
- │    │   ├── TP # contains all subjects' state transition probability
- │    │   ├── Task # contains significant comparison pairs between task and post rest in each state 
- │    │   ├── dNBS_settings # settings for dNBS
- │    │   │   ├── design_matrix.txt # paired-t design matrix
- │    │   │   ├── MNI.txt # a dummy co-ordinate just for visualizing state transition
- │    │   │   ├── nodeLabels.txt # a dummy node name for 10 states 
- │    │
- │    ├── Figure3.ipynb # code for visualizing brain states and covariances
- │    ├── fit_HMM.m # HMM fitting
- │    ├── HMM_analysis_All_in_one.m # Main analysis code
- │
- ├── NBSDirected1.0.1 # External Matlab package for dNBS
- ├── README_graph # Graph included in the README file
+│  README.md
+│
+├─HMM-MAR-master # HMM model root file, add this in MATLAB directory
+│
+├─Neurosynth # Neurosynth decoder, please download neurosynth and run python notebook
+│      neurosynth.ipynb
+│      state_1.nii.gz
+│      state_2.nii.gz
+│      state_3.nii.gz
+│      state_4.nii.gz
+│
+├─README_graph
+│      hmm_process.JPG
+│      HMM_state.gif
+│
+├─Step1 # Step1: Find best HMM and fit HMM to the data
+│      data.mat
+│      GammaList.mat
+│      K_4_HMM_NOpca.mat
+│      K_4_HMM_pca80.mat
+│      K_4_HMM_pca90.mat
+│      step1.mat
+│      Step1_Find_K_number.m
+│
+├─Step2 # Step2: Brain dynamics analysis
+│      data.mat
+│      K_4_HMM_pca80.mat
+│      Step2_Analysis_hmm.m
+│
+└─Step3 # Step3: Brain dynamics and behavior
+        Behavior-HMM.xlsx
+        behavior_data_summary.xlsx
+        Step3_Behavior.m
 
 ```
-
-**Note**: to properly run all scripts, you need to set the ua_code of this repository as your working directory.
 ___
 ## How to use
-* To start replicate the figures, you should go to [HMM_analysis_All_in_one.m](ua_code/HMM_analysis_All_in_one.m).<br />
+* [Step 1](ua_code/Step1) contains the preprocessed fMRI data and instruction for fitting HMM.<br />
 
-* In the code, you can find instructions to replicate all figures, remember to set [ua_code](ua_code) as the working directory and add [HMM-MAR_master](ua_code/HMM-MAR-master) folder and subfolder into the MatLab path.<br />
+* [Step 2](ua_code/Step2) contains the preprocessed fMRI data, 4-state solution HMM and instruction for extracting its dynamic metrics across different sessions.<br />
 
-* In order to run the directional Network-Based Statistics (dNBS), you should enter "dNBS" in MatLab command line window, then follow the instruction provided in [HMM_analysis_All_in_one.m](ua_code/HMM_analysis_All_in_one.m) to execute dNBS.
+* [Step 3](ua_code/Step3) contains the analysis between the dynamic metrics and behavior (motivated lie rate and DDM parameters).<br />
 
-* There are 2 python codes that need to run separately from Matlab. The first is the code for brain state visualization [Figure3.ipynb](ua_code/Figure3.ipynb). The second is for neurosynth decoding [neurosynth.ipynb](ua_code/neurosynth/neurosynth.ipynb).
+* You should run the neurosynth decoding [neurosynth.ipynb](ua_code/neurosynth/neurosynth.ipynb) codes separately from Matlab. 
 ___
 
-For bug reports, please contact Eric Wang ([eric.wang2004nz@link.cuhk.edu.hk](mailto:eric.wang2004nz@link.cuhk.edu.hk), or through X [@ericwan53761434](https://x.com/ericwan53761434).
+For bug reports, please contact Eric Wang ([ericwang@um.edu.mo](mailto:ericwang@um.edu.mo), or through X [@ericwan53761434](https://x.com/ericwan53761434) or through bluesky [@neuro-psyc-eric.bsky.social](https://bsky.app/profile/neuro-psyc-eric.bsky.social).
