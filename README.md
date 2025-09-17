@@ -117,13 +117,13 @@ ___
 ```
 ___
 ## How to use
-* [Step 1](ua_code/Step1) contains the preprocessed fMRI data and instruction for fitting HMM.<br />
+* [Step 1](Step1) contains the preprocessed fMRI data and instruction for fitting HMM.<br />
 
-* [Step 2](ua_code/Step2) contains the preprocessed fMRI data, 4-state solution HMM and instruction for extracting its dynamic metrics across different sessions.<br />
+* [Step 2](Step3) contains the preprocessed fMRI data, 4-state solution HMM and instruction for extracting its dynamic metrics across different sessions.<br />
 
-* [Step 3](ua_code/Step3) contains the analysis between the dynamic metrics and behavior (motivated lie rate and DDM parameters).<br />
+* [Step 3](Step3) contains the analysis between the dynamic metrics and behavior (motivated lie rate and DDM parameters).<br />
 
-* You should run the neurosynth decoding [neurosynth.ipynb](ua_code/neurosynth/neurosynth.ipynb) codes separately from Matlab. 
+* You should run the neurosynth decoding [neurosynth.ipynb](Neurosynth) codes separately from Matlab. 
 ___
 
 For bug reports, please contact Eric Wang ([ericwang@um.edu.mo](mailto:ericwang@um.edu.mo), or through X [@ericwan53761434](https://x.com/ericwan53761434) or through bluesky [@neuro-psyc-eric.bsky.social](https://bsky.app/profile/neuro-psyc-eric.bsky.social).
