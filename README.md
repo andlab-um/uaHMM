@@ -60,13 +60,6 @@ Variational Bayesian (VB) approach is employed for inference in Hidden Markov Mo
 * The hidden state at each time point, $\( \theta_t \)$.
 * The observation model parameters: state means, $\( m_k \)$, and covariances, $\( C_k \)$
 
-Simply, the way VB works is:
-
-* We randomly initialize approximate distributions for model parameters (known as an **approximate posterior distribution**). i.e. we propose the distribution $( q(\cdot) $) for the model parameters.
-* We use the generative model to calculate a cost function (**variational free energy**), which captures the likelihood of our current model parameters generating the data we have observed.
-* We tweak the model parameters' distributions $( q(\cdot) \$) to minimize the cost function.
-* We take the most likely value from $( q(\cdot) \$) as our estimate for the model parameters (this is known as the **MAP estimate**).
-
 Over time, it will converge to the best model parameters for generating the observed data.
 
 However, HMM normally face significiant challenges to estimate potentially billions of parameters from limited data. For more detail, please see disucssion by [Ahrends et al., 2022](https://pubmed.ncbi.nlm.nih.gov/35217207/). Therefore, a common practice is to conduct HMM inference in PCA space to reduce the dimensionality. 
