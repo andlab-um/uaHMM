@@ -110,9 +110,9 @@ ___
 ```
 ___
 ## How to use
-* [Step 1](Step1) contains the preprocessed fMRI data and instruction for fitting HMM.<br />
+* [Step 1](Step1) contains find k number for HMM .<br />
 
-* [Step 2](Step3) contains the preprocessed fMRI data, 4-state solution HMM and instruction for extracting its dynamic metrics across different sessions.<br />
+* [Step 2](Step2) contains the 4-state solution HMM and instruction for extracting its dynamic metrics across different sessions.<br />
 
 * [Step 3](Step3) contains the analysis between the dynamic metrics and behavior (motivated lie rate and DDM parameters).<br />
 

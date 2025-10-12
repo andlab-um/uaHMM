@@ -1,8 +1,4 @@
-%% ---------------- 1. Load data ----------------
-parpool(24); % start parallel processing
-load('data.mat')
-
-%% -------------- 2. Try some hmm ---------------
+%% -------------- 1. Try some hmm ---------------
 
 
 TR = 1;  
@@ -20,43 +16,7 @@ options.cyc = 1000;
 options.initcyc = 1000;
 options.initrep = 300;
 options.pca = 0.8;
-
-Nrep = 5;
-Kmin = 2;
-Kmax = 7;
-
-fe_Mean        = nan(1, Kmax);
-run_similarity = nan(1, Kmax);
-
-for K = Kmin:Kmax
-    fprintf('@@@@@@@@@@@ testing K = %d @@@@@@@@@\n', K)
-    options.K = K;
-    
-    fe_all    = zeros(1, Nrep);
-    Gamma_all = cell(1,  Nrep);
-    tmp       = zeros(Nrep);
-    
-    % run 5 times
-    for rep = 1:Nrep
-        fprintf('@@@@@@@@@@@ Run %d @@@@@@@@@@\n', rep)
-        [~, Gamma, ~, ~, ~, ~, fehist] = hmmmar(allData, T, options);
-        fe_all(rep)      = fehist(end);
-        Gamma_all{rep}   = Gamma;
-    end
-    
-    % free energy
-    fe_Mean(K-1) = mean(fe_all);
-
-    % pairwise similarity
-    idx = 0;
-    for i = 1:Nrep
-        for j = i+1:Nrep
-            idx = idx + 1;
-            sims(idx) = getGammaSimilarity(Gamma_all{i}, Gamma_all{j});
-        end
-    end
-    run_similarity(K-1) = mean(sims);
-end
+load('step1.mat');
 
 Ks = 2:7;
 
@@ -90,12 +50,13 @@ ylabel('Combined z-score');
 title('K vs. Combined Score (z_{sim} + z_{-FE})');
 grid on;
 
-save('step1.mat','fe_Mean','run_similarity')
+
 clear
 clc
 
-%% -------------- 3. Model PCA performance ---------------
+%% -------------- 2. Model PCA performance ---------------
 load('K_4_HMM_NOpca.mat')
+load('data.mat')
 maxFO_noPCA = getMaxFractionalOccupancy(Gamma,T,options);
 
 figure;
@@ -136,14 +97,8 @@ set(gca, 'FontSize', 14);
 
 n = sum(maxFO_pca80 > 0.6);
 percentage_greater = n / 222
-
-%% -------------- 4. Run Best hmm---------------
-options.K=4;
-options.pca = 0.8;
-[hmm, Gamma, Xi, vpath, GammaInit, residuals, fehist] = hmmmar(allData, T, options);
-save('K_4_HMM_pca80.mat','hmm','Gamma','Xi','vpath','GammaInit','residuals','fehist')
-
-%% -------------- 5. Model stability---------------
+clear
+%% -------------- 3. Model stability---------------
 
 load('GammaList.mat')
 similarityMatrix = zeros(5, 5);
