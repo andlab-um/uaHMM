@@ -1,8 +1,8 @@
-# Alternated Brain State after Moral Decisions 
+# The alternated brain states in resting state after Immoral decisions 
 
-Code and data for **The alternated brain states**, accompanying the preprint: 
+Code and data for **The alternated brain states in resting state after Immoral decisions**, accompanying the preprint: 
 
-**E.,Wang, XJ, Xu, R., J. H, Wu (2025). The alternated brain states in resting state after moral decisions.** *bioRxiv* <br/>
+**E.,Wang, XJ, Xu, R., J. H, Wu (2025). The alternated brain states in resting state after Immoral decisions.** *bioRxiv* <br/>
 
 <img src="README_graph/HMM_state.gif" alt="dynamics" /><br/>
 ___
